@@ -27,32 +27,14 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/video/tracking.hpp>
-//#include "eyecapture.h"
-//#include "/usr/local/include/cvblobs/blob.h"
-//#include "/usr/local/include/cvblobs/BlobResult.h"
 
 //---------------------------------------------------------------------
 // Type definitions
-
-/**
- * @brief Represents a line which should be tracked.
- */
-//typedef struct LineToTrack {
-  //cv::Vec2f polar;     [>*< Polar representation. <]
-  //cv::Vec4i cartesian; [>*< A line's end points. <]
-  //cv::Scalar color;    [>*< Color for visualization. <]
-//} LineToTrack;
-
-
-/**
- * @brief Data for communication between main procedure and UI callback.
- */
-//typedef struct CallbackData {
-  //std::vector<cv::Vec2f> *detected_lines;   [>*< Lines found via SHT. <]
-  //std::vector<LineToTrack> *lines_to_track; [>*< Lines the user wants to track. <]
-  //cv::Mat *image;                           [>*< Current frame for visualization. <]
-//} CallbackData;
-
+typedef struct TrackedPupil_ {
+  std::vector<cv::Point2f> position;
+  std::vector<float> radius;
+  cv::Mat frame;
+} TrackedPupil;
 
 //---------------------------------------------------------------------
 // Function declarations
