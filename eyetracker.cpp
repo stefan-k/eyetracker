@@ -25,7 +25,8 @@ int main(int /*argc*/, char ** /*argv*/)
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
 
-    for(int i = 0; i < pupil.position.size(); i++)
+    //for(int i = 0; i < pupil.position.size(); i++)
+    for(int i = 0; i < 1; i++)
     {
       cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
     }
