@@ -13,6 +13,8 @@ add_executable(
   eyetracker
   eyetracker.cpp
   eyetracker.h
+  #eyecapture.cpp
+  #eyecapture.h
 )
 
 target_link_libraries(

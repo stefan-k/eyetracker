@@ -27,6 +27,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/video/tracking.hpp>
+//#include "eyecapture.h"
+//#include "/usr/local/include/cvblobs/blob.h"
+//#include "/usr/local/include/cvblobs/BlobResult.h"
 
 //---------------------------------------------------------------------
 // Type definitions
