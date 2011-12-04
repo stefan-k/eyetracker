@@ -13,4 +13,4 @@ Compile:
 $ make
 
 Run executable:
-$ ./et
+$ ./eyetracker
