@@ -1,0 +1,16 @@
+How to compile the source?
+
+Change into the source directory:
+$ cd path/to/source/eyetracker
+
+Create build directory and change into it:
+$ mkdir build && cd build
+
+Run Cmake:
+$ cmake ..
+
+Compile:
+$ make
+
+Run executable:
+$ ./et
