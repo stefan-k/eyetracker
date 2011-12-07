@@ -17,45 +17,9 @@ TrackingEyeHough::TrackingEyeHough()
   TrackedPupil pupil_to_track;
   HoughCirclesPupil(pupils);
 
-  //std::vector<cv::Point2f> detected_positions;
-  //std::vector<float> radius;
-  //TrackedPupil pupil_to_track;
-
-  //cv::Mat frame, binary;
-  //for(int i = 0; i < 20; i++)
-    //frame = m_eye->getFrame();
-
-  //cv::threshold(frame, binary, 70, 255, cv::THRESH_BINARY);
-  //for(int i = 0; i < 40; i++)
-  //{
-    //cv::morphologyEx(binary, binary, cv::MORPH_OPEN, cv::Mat());
-    //cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
-  //}
-
-  //std::vector<cv::Vec3f> circles;
-
-  //int test = 10;
-  //while(circles.size() < 3 && test > 0)
-  //{
-    //cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, 1, 60, 30, test, 15, 40);
-    //test -= 1;
-  //}
-
-  //for(int i = 0; i < circles.size(); i++)
-  //{
-    //detected_positions.push_back(cv::Point2f(circles[i][0], circles[i][1]));
-    //radius.push_back(circles[i][2]);
-  //}
-  //pupil_to_track.frame = frame.clone();
-
   CallbackData callback_data;
-  //callback_data.detected_positions = &detected_positions;
-  //callback_data.detected_radius = &radius;
-  //callback_data.pupil_to_track = &pupil_to_track;
-  //callback_data.image = &frame;
   callback_data.detected_positions = &pupils;
   callback_data.pupil_to_track = &pupil_to_track;
-  //callback_data.image = &(pupils.frame);
 
   cv::imshow(INPUT_WINDOW_NAME, pupils.frame);
   cv::setMouseCallback(INPUT_WINDOW_NAME, mouse_callback, &callback_data);
