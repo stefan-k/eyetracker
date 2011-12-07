@@ -66,6 +66,8 @@ private:
   TrackingEyeHough& operator = (const TrackingEyeHough&);
 
   void HoughCirclesPupil(TrackedPupil &pupil);
+
+  double distance(const cv::Point2f &pupil_to_track, const cv::Point2f &found_pupil);
   
   
 };

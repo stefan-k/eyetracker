@@ -35,6 +35,10 @@ TrackedPupil TrackingEyeHough::getPupil()
   TrackedPupil pupil;
   HoughCirclesPupil(pupil);
 
+  for(int i = 0; i < pupil.position.size(); i++)
+  {
+  }
+
   return pupil;
   
 }
@@ -119,4 +123,11 @@ void mouse_callback(int event, int x, int y, int flags, void* user_data)
   default:
     break;
   }
+}
+
+double TrackingEyeHough::distance(const cv::Point2f &pupil_to_track, const cv::Point2f &found_pupil)
+{
+  // Euclidian distance
+  return sqrt(pow(pupil_to_track.x - found_pupil.x, 2) +
+              pow(pupil_to_track.y - found_pupil.y, 2));
 }
