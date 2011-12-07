@@ -64,8 +64,9 @@ private:
    * disabled copy constructor
    */
   TrackingEyeHough& operator = (const TrackingEyeHough&);
+
+  void HoughCirclesPupil(TrackedPupil &pupil);
   
-  //void mouse_callback(int event, int x, int y, int flags, void* user_data);
   
 };
 
