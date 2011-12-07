@@ -27,6 +27,7 @@ class TrackingEyeHough
 {
 
   EyeCapture* m_eye;
+  TrackedPupil m_curr_pupil;
 
 public:
 

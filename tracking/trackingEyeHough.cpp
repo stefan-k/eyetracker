@@ -11,19 +11,17 @@ TrackingEyeHough::TrackingEyeHough()
 {
   m_eye = new EyeCapture(0, 1);
 
-  // NEEDS A TOTAL MAKEOVER!! 
-  
   TrackedPupil pupils;
-  TrackedPupil pupil_to_track;
   HoughCirclesPupil(pupils);
 
   CallbackData callback_data;
   callback_data.detected_positions = &pupils;
-  callback_data.pupil_to_track = &pupil_to_track;
+  callback_data.pupil_to_track = &m_curr_pupil;
 
   cv::imshow(INPUT_WINDOW_NAME, pupils.frame);
   cv::setMouseCallback(INPUT_WINDOW_NAME, mouse_callback, &callback_data);
   PAUSE;
+
 }
 
 //------------------------------------------------------------------------------
@@ -31,6 +29,7 @@ TrackingEyeHough::~TrackingEyeHough()
 {
 }
 
+//------------------------------------------------------------------------------
 TrackedPupil TrackingEyeHough::getPupil()
 {
   TrackedPupil pupil;
