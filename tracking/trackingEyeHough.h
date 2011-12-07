@@ -17,11 +17,10 @@
 #include <cv.h>
 
 typedef struct CallbackData {
-  std::vector<cv::Point2f> *detected_positions;  
-  std::vector<float> *detected_radius;   
+  TrackedPupil *detected_positions;  
   TrackedPupil *pupil_to_track; 
-  cv::Mat *image;                           
 } CallbackData;
+
 void mouse_callback(int event, int x, int y, int flags, void* user_data);
 
 class TrackingEyeHough
