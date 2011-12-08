@@ -15,6 +15,7 @@
 #define EYE_CAM 1
 #define HEAD_CAM 0
 #define VIDEO_OUTPUT 0
+#define CONVERT_TO_GRAY 1
 
 /**
  * @brief The main entry point 
@@ -22,8 +23,12 @@
 int main(int /*argc*/, char ** /*argv*/)
 {
   TrackingEyeHough eye(EYE_CAM);
+
   TrackedPupil pupil;
+
   cv::Mat frame;
+  cv::Mat head_frame;
+
   cv::VideoWriter writer;
   if(VIDEO_OUTPUT)
   {
@@ -35,10 +40,14 @@ int main(int /*argc*/, char ** /*argv*/)
     }
   }
 
+  HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
+
   for(;;)
   {
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
+
+    head_frame = head.getFrame();
 
     if (frame.empty())
     {
@@ -52,8 +61,14 @@ int main(int /*argc*/, char ** /*argv*/)
       cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
     }
 
-    cv::imshow("edges", frame);
+    // show eye frame
+    cv::imshow("eye", frame);
     if(cv::waitKey(10) >= 0) break;
+
+    // show head frame
+    cv::imshow("head", head_frame);
+    if(cv::waitKey(10) >= 0) break;
+
 
     if(VIDEO_OUTPUT)
     {
