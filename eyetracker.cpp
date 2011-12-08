@@ -11,17 +11,20 @@
 #include "eyecapture.cpp"
 #include "tracking/trackingEyeHough.cpp"
 
+#define EYE_CAM 1
+#define HEAD_CAM 0
+#define VIDEO_OUTPUT 0
+
 /**
  * @brief The main entry point 
  */
 int main(int /*argc*/, char ** /*argv*/)
 {
-  TrackingEyeHough eye;
+  TrackingEyeHough eye(EYE_CAM);
   TrackedPupil pupil;
   cv::Mat frame;
   cv::VideoWriter writer;
-  int video_output = 0;
-  if(video_output)
+  if(VIDEO_OUTPUT)
   {
     writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
     if (!writer.isOpened())
@@ -51,7 +54,7 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::imshow("edges", frame);
     if(cv::waitKey(10) >= 0) break;
 
-    if(video_output)
+    if(VIDEO_OUTPUT)
     {
       cv::Mat color;
       cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);

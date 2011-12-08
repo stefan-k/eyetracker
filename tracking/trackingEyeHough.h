@@ -28,6 +28,7 @@ class TrackingEyeHough
 
   EyeCapture* m_eye;
   TrackedPupil m_curr_pupil;
+  const int m_eye_cam;
 
 public:
 
@@ -35,7 +36,7 @@ public:
    * Constructor
    * @param 
    */
-  TrackingEyeHough();
+  TrackingEyeHough(const int eye_cam);
 
   /**
    * Destructor
@@ -53,7 +54,7 @@ private:
   /**
    * disabled default constructor
    */
-  //TrackingEyeHough();
+  TrackingEyeHough();
 
   /**
    * disabled copy constructor

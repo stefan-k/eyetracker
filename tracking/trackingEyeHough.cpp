@@ -7,9 +7,10 @@
 
 
 //------------------------------------------------------------------------------
-TrackingEyeHough::TrackingEyeHough()
+TrackingEyeHough::TrackingEyeHough(const int eye_cam)
+  : m_eye_cam(eye_cam)
 {
-  m_eye = new EyeCapture(0, 1);
+  m_eye = new EyeCapture(m_eye_cam, 1);
 
   TrackedPupil pupils;
   HoughCirclesPupil(pupils);
