@@ -9,6 +9,7 @@
 
 #include "eyetracker.h"
 #include "eyecapture.cpp"
+#include "headcapture.cpp"
 #include "tracking/trackingEyeHough.cpp"
 
 #define EYE_CAM 1

@@ -87,7 +87,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   int test = 10;
   while(circles.size() < 3 && test > 0)
   {
-    cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, 1, 10, 30, test, 20, 40);
+    //cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, 1, 10, 30, test, 20, 40);
+    cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, 1, 10, 30, test, 1, 40);
     // decrease threshold is not enough circles are found
     test -= 1;
   }
