@@ -12,7 +12,7 @@
 #include "headcapture.cpp"
 #include "tracking/trackingEyeHough.cpp"
 
-#define EYE_CAM 1
+#define EYE_CAM 0
 #define HEAD_CAM 0
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
@@ -40,14 +40,14 @@ int main(int /*argc*/, char ** /*argv*/)
     }
   }
 
-  HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
+  //HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
 
   for(;;)
   {
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
 
-    head_frame = head.getFrame();
+    //head_frame = head.getFrame();
 
     if (frame.empty())
     {
@@ -66,8 +66,8 @@ int main(int /*argc*/, char ** /*argv*/)
     if(cv::waitKey(10) >= 0) break;
 
     // show head frame
-    cv::imshow("head", head_frame);
-    if(cv::waitKey(10) >= 0) break;
+    //cv::imshow("head", head_frame);
+    //if(cv::waitKey(10) >= 0) break;
 
 
     if(VIDEO_OUTPUT)

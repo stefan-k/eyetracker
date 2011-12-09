@@ -12,6 +12,11 @@ TrackingEyeHough::TrackingEyeHough(const int eye_cam)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
 
+  for(int i = 0; i < 50; i++)
+  {
+    m_eye->getFrame();
+  }
+
   TrackedPupil pupils;
   HoughCirclesPupil(pupils);
 
@@ -54,7 +59,7 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
 
   // check if found circle is close enough
-  if(min < 50)
+  if(min < 80)
     // pupil caught, update 
     m_curr_pupil = tmp_pupil;
   else
