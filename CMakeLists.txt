@@ -24,4 +24,5 @@ target_link_libraries(
   opencv_features2d
   opencv_calib3d
   opencv_video
+  opencv_imgproc
 )
