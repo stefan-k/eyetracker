@@ -166,3 +166,15 @@ double TrackingEyeHough::distance(const cv::Point2f pupil_to_track,
   return sqrt(pow(pupil_to_track.x - found_pupil.x, 2) +
               pow(pupil_to_track.y - found_pupil.y, 2));
 }
+
+void TrackingEyeHough::printParams()
+{
+  std::cout << "TrackingEyeHough Parameters" << std::endl;
+  std::cout << " m_bw_threshold:       " << m_bw_threshold    << std::endl;
+  std::cout << " m_hough_minDist:      " << m_hough_minDist   << std::endl;
+  std::cout << " m_hough_dp:           " << m_hough_dp        << std::endl;
+  std::cout << " m_hough_param1:       " << m_hough_param1    << std::endl;
+  std::cout << " m_hough_param2:       " << m_hough_param2    << std::endl;
+  std::cout << " m_hough_minRadius:    " << m_hough_minRadius << std::endl;
+  std::cout << " m_hough_maxRadius:    " << m_hough_maxRadius << std::endl;
+}

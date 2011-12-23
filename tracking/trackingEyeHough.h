@@ -57,6 +57,11 @@ public:
    * Return tracked pupils
    */
   TrackedPupil getPupil();
+  
+  /**
+   * Print parameters
+   */
+  void printParams();
 
   
 private:

@@ -84,6 +84,8 @@ int main(int /*argc*/, char ** /*argv*/)
       writer << color;
     }
   }
-  // the camera will be deinitialized automatically in VideoCapture destructor
+  // print parameters
+  eye.printParams();
+
   return 0;
 }
