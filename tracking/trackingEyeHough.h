@@ -30,6 +30,16 @@ class TrackingEyeHough
   TrackedPupil m_curr_pupil;
   const int m_eye_cam;
 
+  int m_bw_threshold;
+
+  // HoughCircles Parameters
+  double m_hough_minDist;
+  double m_hough_dp;
+  double m_hough_param1;
+  double m_hough_param2;
+  double m_hough_minRadius;
+  double m_hough_maxRadius;
+
 public:
 
   /**

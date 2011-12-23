@@ -8,7 +8,8 @@
 
 //------------------------------------------------------------------------------
 TrackingEyeHough::TrackingEyeHough(const int eye_cam)
-  : m_eye_cam(eye_cam)
+  : m_eye_cam(eye_cam), m_bw_threshold(50), m_hough_minDist(30), m_hough_dp(1),
+    m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(1), m_hough_maxRadius(40)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
 
@@ -79,7 +80,7 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 
   //cv::GaussianBlur(gray, gray, cv::Size(9,9), 3, 3);
   //cv::threshold(gray, binary, 60, 255, cv::THRESH_BINARY_INV);
-  cv::threshold(gray, binary, 50, 255, cv::THRESH_BINARY);
+  cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY);
 
   //for(int i = 0; i < 40; i++)
   //{
@@ -89,12 +90,14 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 
   std::vector<cv::Vec3f> circles;
 
-  int test = 10;
+  int test = m_hough_param2;
   while(circles.size() < 3 && test > 0)
   {
-    //cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, 1, 10, 30, test, 20, 40);
-    cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, 1, 10, 30, test, 1, 40);
-    // decrease threshold is not enough circles are found
+    cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, m_hough_dp, 
+                     m_hough_minDist, m_hough_param1, test, m_hough_minRadius, 
+                     m_hough_maxRadius);
+
+    // decrease threshold if not enough circles are found
     test -= 1;
   }
 
