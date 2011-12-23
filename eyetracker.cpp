@@ -105,9 +105,9 @@ int main(int /*argc*/, char ** /*argv*/)
 
     // get new Trackbar values and update 
     bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD,    EYE_WINDOW_NAME);
-    minDist =   cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST,   EYE_WINDOW_NAME);
-    param1 =    cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM1,    EYE_WINDOW_NAME);
-    param2 =    cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM2,    EYE_WINDOW_NAME);
+    minDist   = cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST,   EYE_WINDOW_NAME);
+    param1    = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM1,    EYE_WINDOW_NAME);
+    param2    = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM2,    EYE_WINDOW_NAME);
     minRadius = cv::getTrackbarPos(TRACKBAR_HOUGH_MINRADIUS, EYE_WINDOW_NAME);
     maxRadius = cv::getTrackbarPos(TRACKBAR_HOUGH_MAXRADIUS, EYE_WINDOW_NAME);
     eye.setBwThreshold(bw_thresh);

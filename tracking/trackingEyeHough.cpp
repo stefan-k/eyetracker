@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
-  : m_eye_cam(eye_cam), m_bw_threshold(50), m_hough_minDist(30), m_hough_dp(1),
+  : m_eye_cam(eye_cam), m_bw_threshold(10), m_hough_minDist(30), m_hough_dp(1),
     m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(30), m_hough_maxRadius(40),
     m_show_binary(show_binary)
 {
@@ -79,13 +79,13 @@ TrackedPupil TrackingEyeHough::getPupil()
 void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 {
   cv::Mat gray, binary, edges;
-  cv::Rect roi(1/4*640+60, 1/4*480+60, 640/2-120, 480/2-120);
+  //cv::Rect roi(1/4*640+60, 1/4*480+60, 640/2-120, 480/2-120);
 
   gray = m_eye->getFrame();
-  gray = gray(roi).clone();
+  //gray = gray(roi).clone();
 
 
-  //cv::GaussianBlur(gray, gray, cv::Size(9,9), 3, 3);
+  cv::GaussianBlur(gray, gray, cv::Size(9,9), 3, 3);
   //cv::threshold(gray, binary, 60, 255, cv::THRESH_BINARY_INV);
   cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY);
 
@@ -94,8 +94,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
     //cv::morphologyEx(binary, binary, cv::MORPH_OPEN, cv::Mat());
     ////cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
   //}
-  for(int i = 0; i < 40; i++)
-    cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
+  //for(int i = 0; i < 40; i++)
+    //cv::morphologyEx(binary, binary, cv::MORPH_OPEN, cv::Mat());
 
   std::vector<cv::Vec3f> circles;
 
