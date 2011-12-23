@@ -64,6 +64,18 @@ public:
    */
   void printParams();
 
+  /**
+   * Set and Get Parameters for BW Thresholding
+   */
+  void setBwThreshold(double threshold)
+  {
+    m_bw_threshold = threshold;
+  }
+
+  int getBwThreshold()
+  {
+    return m_bw_threshold;
+  }
 
   /**
    * Set Parameters for HoughCircles
