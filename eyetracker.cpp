@@ -18,6 +18,8 @@
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
 
+#define SHOW_BINARY 0
+
 // Name definitions
 #define EYE_WINDOW_NAME           "EyeCam"
 #define HEAD_WINDOW_NAME          "HeadCam"
@@ -34,7 +36,7 @@
  */
 int main(int /*argc*/, char ** /*argv*/)
 {
-  TrackingEyeHough eye(EYE_CAM);
+  TrackingEyeHough eye(EYE_CAM, SHOW_BINARY);
 
   TrackedPupil pupil;
 
@@ -92,18 +94,19 @@ int main(int /*argc*/, char ** /*argv*/)
 
     // show eye frame
     cv::imshow(EYE_WINDOW_NAME, frame);
-    cv::createTrackbar(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME, &bw_thresh, 255, 0, NULL);
-    cv::createTrackbar(TRACKBAR_HOUGH_MINDIST, EYE_WINDOW_NAME, &minDist, 255, 0, NULL);
-    cv::createTrackbar(TRACKBAR_HOUGH_PARAM1, EYE_WINDOW_NAME, &param1, 255, 0, NULL);
-    cv::createTrackbar(TRACKBAR_HOUGH_PARAM2, EYE_WINDOW_NAME, &param2, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_BW_THRESHOLD,    EYE_WINDOW_NAME, &bw_thresh, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MINDIST,   EYE_WINDOW_NAME, &minDist,   255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_PARAM1,    EYE_WINDOW_NAME, &param1,    255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_PARAM2,    EYE_WINDOW_NAME, &param2,    255, 0, NULL);
     cv::createTrackbar(TRACKBAR_HOUGH_MINRADIUS, EYE_WINDOW_NAME, &minRadius, 255, 0, NULL);
     cv::createTrackbar(TRACKBAR_HOUGH_MAXRADIUS, EYE_WINDOW_NAME, &maxRadius, 255, 0, NULL);
     if(cv::waitKey(10) >= 0) break;
 
-    bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME);
-    minDist = cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST, EYE_WINDOW_NAME);
-    param1 = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM1, EYE_WINDOW_NAME);
-    param2 = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM2, EYE_WINDOW_NAME);
+    // get new Trackbar values and update 
+    bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD,    EYE_WINDOW_NAME);
+    minDist =   cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST,   EYE_WINDOW_NAME);
+    param1 =    cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM1,    EYE_WINDOW_NAME);
+    param2 =    cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM2,    EYE_WINDOW_NAME);
     minRadius = cv::getTrackbarPos(TRACKBAR_HOUGH_MINRADIUS, EYE_WINDOW_NAME);
     maxRadius = cv::getTrackbarPos(TRACKBAR_HOUGH_MAXRADIUS, EYE_WINDOW_NAME);
     eye.setBwThreshold(bw_thresh);

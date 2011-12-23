@@ -30,6 +30,7 @@ class TrackingEyeHough
   EyeCapture* m_eye;
   TrackedPupil m_curr_pupil;
   const int m_eye_cam;
+  int m_show_binary;
 
   int m_bw_threshold;
 
@@ -47,7 +48,7 @@ public:
    * Constructor
    * @param 
    */
-  TrackingEyeHough(const int eye_cam);
+  TrackingEyeHough(const int eye_cam, int show_binary);
 
   /**
    * Destructor

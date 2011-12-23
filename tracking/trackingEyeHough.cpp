@@ -7,15 +7,19 @@
 
 
 //------------------------------------------------------------------------------
-TrackingEyeHough::TrackingEyeHough(const int eye_cam)
+TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
   : m_eye_cam(eye_cam), m_bw_threshold(50), m_hough_minDist(30), m_hough_dp(1),
-    m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(1), m_hough_maxRadius(40)
+    m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(1), m_hough_maxRadius(40),
+    m_show_binary(show_binary)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
 
-  for(int i = 0; i < 50; i++)
+  // this is necessary to give the camera some time to adjust to the current
+  // illumination of the scene
+  for(int i = 0; i < 10; i++)
   {
     m_eye->getFrame();
+    sleep(1); 
   }
 
   TrackedPupil pupils;
@@ -109,8 +113,10 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
     pupil.position.push_back(cv::Point2f(circles[i][0], circles[i][1]));
     pupil.radius.push_back(circles[i][2]);
   }
-  pupil.frame = gray.clone();
-  //pupil.frame = binary.clone();
+  if(m_show_binary)
+    pupil.frame = binary.clone();
+  else
+    pupil.frame = gray.clone();
 }
 
 //------------------------------------------------------------------------------
