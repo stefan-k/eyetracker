@@ -17,6 +17,9 @@
 //#define CAPTURE_HEAD
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
+#define EYE_WINDOW_NAME "EyeCam"
+#define HEAD_WINDOW_NAME "HeadCam"
+#define TRACKBAR_BW_THRESHOLD "BW Threshold"
 
 /**
  * @brief The main entry point 
@@ -45,6 +48,9 @@ int main(int /*argc*/, char ** /*argv*/)
   HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
 #endif
 
+  // define all trackbar values
+  int bw_thresh = eye.getBwThreshold();
+
   for(;;)
   {
     pupil = eye.getPupil();
@@ -67,8 +73,12 @@ int main(int /*argc*/, char ** /*argv*/)
     }
 
     // show eye frame
-    cv::imshow("eye", frame);
+    cv::imshow(EYE_WINDOW_NAME, frame);
+    cv::createTrackbar(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME, &bw_thresh, 255, 0, NULL);
     if(cv::waitKey(10) >= 0) break;
+
+    bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME);
+    eye.setBwThreshold(bw_thresh);
 
 #ifdef CAPTURE_HEAD
     // show head frame
