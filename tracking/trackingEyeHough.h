@@ -21,6 +21,7 @@ typedef struct CallbackData {
   TrackedPupil *pupil_to_track; 
 } CallbackData;
 
+// mouse callback sadly can't be within class definition (don't know why)
 void mouse_callback(int event, int x, int y, int flags, void* user_data);
 
 class TrackingEyeHough
@@ -37,8 +38,8 @@ class TrackingEyeHough
   double m_hough_dp;
   double m_hough_param1;
   double m_hough_param2;
-  double m_hough_minRadius;
-  double m_hough_maxRadius;
+  int m_hough_minRadius;
+  int m_hough_maxRadius;
 
 public:
 
@@ -63,6 +64,72 @@ public:
    */
   void printParams();
 
+
+  /**
+   * Set Parameters for HoughCircles
+   */
+  void setHoughMinDist(double minDist)
+  {
+    m_hough_minDist = minDist;
+  }
+
+  void setHoughDP(double dp)
+  {
+    m_hough_dp = dp;
+  }
+
+  void setHoughParam1(double param1)
+  {
+    m_hough_param1 = param1;
+  }
+
+  void setHoughParam2(double param2)
+  {
+    m_hough_param2 = param2;
+  }
+
+  void setHoughMinRadius(int minRadius)
+  {
+    m_hough_minRadius = minRadius;
+  }
+
+  void setHoughMaxRadius(int maxRadius)
+  {
+    m_hough_maxRadius = maxRadius;
+  }
+
+  /**
+   * Get Parameters for HoughCircles
+   */
+  double getHoughMinDist()
+  {
+    return m_hough_minDist;
+  }
+
+  double getHoughDP()
+  {
+    return m_hough_dp;
+  }
+
+  double getHoughParam1()
+  {
+    return m_hough_param1;
+  }
+
+  double getHoughParam2()
+  {
+    return m_hough_param2;
+  }
+
+  int getHoughMinRadius()
+  {
+    return m_hough_minRadius;
+  }
+
+  int getHoughMaxRadius()
+  {
+    return m_hough_maxRadius;
+  }
   
 private:
 
