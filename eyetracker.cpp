@@ -59,6 +59,9 @@ int main(int /*argc*/, char ** /*argv*/)
   // define all trackbar values
   int bw_thresh = eye.getBwThreshold();
   int minDist = (int)eye.getHoughMinDist();
+  // NOTE: DP is useless, since its mandatory to be float
+  int param1 = (int)eye.getHoughParam1();
+  int param2 = (int)eye.getHoughParam2();
 
   for(;;)
   {
@@ -89,12 +92,18 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::createTrackbar(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME, &bw_thresh, 255, 0, NULL);
     cv::createTrackbar(TRACKBAR_HOUGH_MINDIST, EYE_WINDOW_NAME, &minDist, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_PARAM1, EYE_WINDOW_NAME, &param1, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_PARAM2, EYE_WINDOW_NAME, &param2, 255, 0, NULL);
     if(cv::waitKey(10) >= 0) break;
 
     bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME);
     minDist = cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST, EYE_WINDOW_NAME);
+    param1 = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM1, EYE_WINDOW_NAME);
+    param2 = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM2, EYE_WINDOW_NAME);
     eye.setBwThreshold(bw_thresh);
     eye.setHoughMinDist(minDist);
+    eye.setHoughParam1(param1);
+    eye.setHoughParam2(param2);
 
 #ifdef CAPTURE_HEAD
     // show head frame
