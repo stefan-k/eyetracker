@@ -17,9 +17,17 @@
 //#define CAPTURE_HEAD
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
-#define EYE_WINDOW_NAME "EyeCam"
-#define HEAD_WINDOW_NAME "HeadCam"
-#define TRACKBAR_BW_THRESHOLD "BW Threshold"
+
+// Name definitions
+#define EYE_WINDOW_NAME           "EyeCam"
+#define HEAD_WINDOW_NAME          "HeadCam"
+#define TRACKBAR_BW_THRESHOLD     "BW Threshold"
+#define TRACKBAR_HOUGH_MINDIST    "Hough minDist"
+#define TRACKBAR_HOUGH_DP         "Hough DP"
+#define TRACKBAR_HOUGH_PARAM1     "Hough Param1"
+#define TRACKBAR_HOUGH_PARAM2     "Hough Param2"
+#define TRACKBAR_HOUGH_MINRADIUS  "Hough minRadius"
+#define TRACKBAR_HOUGH_MAXRADIUS  "Hough maxRadius"
 
 /**
  * @brief The main entry point 
@@ -50,21 +58,26 @@ int main(int /*argc*/, char ** /*argv*/)
 
   // define all trackbar values
   int bw_thresh = eye.getBwThreshold();
+  int minDist = (int)eye.getHoughMinDist();
 
   for(;;)
   {
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
+    if (frame.empty())
+    {
+      std::cout << "[Warning] EYE: Skipping empty frame." << std::endl;
+      continue;
+    }
 
 #ifdef CAPTURE_HEAD
     head_frame = head.getFrame();
-#endif
-
-    if (frame.empty())
+    if (head_frame.empty())
     {
-      std::cout << "[Warning] Skipping empty frame." << std::endl;
+      std::cout << "[Warning] HEAD: Skipping empty frame." << std::endl;
       continue;
     }
+#endif
 
     //for(int i = 0; i < pupil.position.size(); i++)
     for(int i = 0; i < 1; i++)
@@ -75,10 +88,13 @@ int main(int /*argc*/, char ** /*argv*/)
     // show eye frame
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::createTrackbar(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME, &bw_thresh, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MINDIST, EYE_WINDOW_NAME, &minDist, 255, 0, NULL);
     if(cv::waitKey(10) >= 0) break;
 
     bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD, EYE_WINDOW_NAME);
+    minDist = cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST, EYE_WINDOW_NAME);
     eye.setBwThreshold(bw_thresh);
+    eye.setHoughMinDist(minDist);
 
 #ifdef CAPTURE_HEAD
     // show head frame
