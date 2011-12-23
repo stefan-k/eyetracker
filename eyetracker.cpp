@@ -14,6 +14,8 @@
 
 #define EYE_CAM 1
 #define HEAD_CAM 0
+//#define CAPTURE_HEAD
+#define CAPTURE_EYE 1
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
 
@@ -40,14 +42,18 @@ int main(int /*argc*/, char ** /*argv*/)
     }
   }
 
+#ifdef CAPTURE_HEAD
   HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
+#endif
 
   for(;;)
   {
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
 
+#ifdef CAPTURE_HEAD
     head_frame = head.getFrame();
+#endif
 
     if (frame.empty())
     {
@@ -65,9 +71,11 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::imshow("eye", frame);
     if(cv::waitKey(10) >= 0) break;
 
+#ifdef CAPTURE_HEAD
     // show head frame
     cv::imshow("head", head_frame);
     if(cv::waitKey(10) >= 0) break;
+#endif
 
 
     if(VIDEO_OUTPUT)
