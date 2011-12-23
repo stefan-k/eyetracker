@@ -30,6 +30,8 @@ class TrackingEyeHough
   EyeCapture* m_eye;
   TrackedPupil m_curr_pupil;
   const int m_eye_cam;
+
+  cv::Mat m_binary_frame;
   int m_show_binary;
 
   int m_bw_threshold;
@@ -142,6 +144,14 @@ public:
   int getHoughMaxRadius()
   {
     return m_hough_maxRadius;
+  }
+
+  /**
+   * Get Parameters for HoughCircles
+   */
+  cv::Mat getBinaryFrame()
+  {
+    return m_binary_frame.clone();
   }
   
 private:

@@ -23,6 +23,7 @@
 // Name definitions
 #define EYE_WINDOW_NAME           "EyeCam"
 #define HEAD_WINDOW_NAME          "HeadCam"
+#define BINARY_WINDOW_NAME        "Binary"
 #define TRACKBAR_BW_THRESHOLD     "BW Threshold"
 #define TRACKBAR_HOUGH_MINDIST    "Hough minDist"
 #define TRACKBAR_HOUGH_DP         "Hough DP"
@@ -116,9 +117,12 @@ int main(int /*argc*/, char ** /*argv*/)
     eye.setHoughMinRadius(minRadius);
     eye.setHoughMaxRadius(maxRadius);
 
+    cv::imshow(BINARY_WINDOW_NAME, eye.getBinaryFrame());
+    if(cv::waitKey(10) >= 0) break;
+
 #ifdef CAPTURE_HEAD
     // show head frame
-    cv::imshow("head", head_frame);
+    cv::imshow(HEAD_WINDOW_NAME, head_frame);
     if(cv::waitKey(10) >= 0) break;
 #endif
 
