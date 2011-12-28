@@ -8,8 +8,8 @@
 
 //------------------------------------------------------------------------------
 TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
-  : m_eye_cam(eye_cam), m_bw_threshold(10), m_hough_minDist(30), m_hough_dp(1),
-    m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(30), m_hough_maxRadius(40),
+  : m_eye_cam(eye_cam), m_bw_threshold(25), m_hough_minDist(30), m_hough_dp(1),
+    m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(0), m_hough_maxRadius(40),
     m_show_binary(show_binary)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
@@ -51,6 +51,7 @@ TrackedPupil TrackingEyeHough::getPupil()
 
   // find closest circle
   double min = std::numeric_limits<double>::max();
+  std::cout << "found " << pupil.position.size() << " pupils" << std::endl;
   for(int i = 0; i < pupil.position.size(); i++)
   {
     double dist = distance(m_curr_pupil.position[0], pupil.position[i]);
@@ -64,7 +65,7 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
 
   // check if found circle is close enough
-  if(min < 80)
+  if(min < 800)
     // pupil caught, update 
     m_curr_pupil = tmp_pupil;
   else
@@ -79,28 +80,34 @@ TrackedPupil TrackingEyeHough::getPupil()
 void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 {
   cv::Mat gray, binary, edges;
-  //cv::Rect roi(1/4*640+60, 1/4*480+60, 640/2-120, 480/2-120);
+  cv::Rect roi(1/4*640+60, 1/4*480+60, 640/2-120, 480/2-120);
 
   gray = m_eye->getFrame();
-  //gray = gray(roi).clone();
+  gray = gray(roi).clone();
+  equalizeHist(gray, gray);
 
 
   cv::GaussianBlur(gray, gray, cv::Size(9,9), 3, 3);
   //cv::threshold(gray, binary, 60, 255, cv::THRESH_BINARY_INV);
-  cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY);
+  cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
   //for(int i = 0; i < 40; i++)
   //{
     //cv::morphologyEx(binary, binary, cv::MORPH_OPEN, cv::Mat());
     ////cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
   //}
-  //for(int i = 0; i < 40; i++)
-    //cv::morphologyEx(binary, binary, cv::MORPH_OPEN, cv::Mat());
+
+  //for(int i = 0; i < 1; i++)
+    //cv::erode(binary, binary, cv::Mat());
+
+  for(int i = 0; i < 4; i++)
+    cv::dilate(binary, binary, cv::Mat());
+    //cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
 
   std::vector<cv::Vec3f> circles;
 
   int test = m_hough_param2;
-  while(circles.size() < 3 && test > 0)
+  while(circles.size() < 8 && test > 0)
   {
     cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, m_hough_dp, 
                      m_hough_minDist, m_hough_param1, test, m_hough_minRadius, 
