@@ -8,8 +8,8 @@
 
 //------------------------------------------------------------------------------
 TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
-  : m_eye_cam(eye_cam), m_bw_threshold(25), m_hough_minDist(30), m_hough_dp(2),
-    m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(0), m_hough_maxRadius(40),
+  : m_eye_cam(eye_cam), m_bw_threshold(10), m_hough_minDist(30), m_hough_dp(2),
+    m_hough_param1(30), m_hough_param2(1), m_hough_minRadius(5), m_hough_maxRadius(40),
     m_show_binary(show_binary)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
@@ -65,12 +65,23 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
 
   // check if found circle is close enough
-  if(min < 800)
-    // pupil caught, update 
-    m_curr_pupil = tmp_pupil;
+  if(min < 5)
+  {
+    m_curr_pupil.frame = tmp_pupil.frame.clone();
+  }
   else
-    // pupil not caught, but still update frame
-    m_curr_pupil.frame = tmp_pupil.frame;
+  {
+    m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
+    m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
+    m_curr_pupil.frame = tmp_pupil.frame.clone();
+  }
+
+  //if(min < 800)
+    //// pupil caught, update 
+    //m_curr_pupil = tmp_pupil;
+  //else
+    //// pupil not caught, but still update frame
+    //m_curr_pupil.frame = tmp_pupil.frame;
 
   return m_curr_pupil;
   
@@ -88,7 +99,6 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 
 
   cv::GaussianBlur(gray, gray, cv::Size(9,9), 3, 3);
-  //cv::threshold(gray, binary, 60, 255, cv::THRESH_BINARY_INV);
   cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
   //for(int i = 0; i < 40; i++)
