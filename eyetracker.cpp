@@ -68,6 +68,8 @@ int main(int /*argc*/, char ** /*argv*/)
   int minRadius = (int) eye.getHoughMinRadius();
   int maxRadius = (int) eye.getHoughMaxRadius();
 
+  std::vector<cv::Point2f> tracked_points;
+
   for(;;)
   {
     pupil = eye.getPupil();
@@ -87,12 +89,17 @@ int main(int /*argc*/, char ** /*argv*/)
     }
 #endif
 
-    for(int i = 0; i < pupil.position.size(); i++)
-    //for(int i = 0; i < 1; i++)
+    //cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
+    cv::circle(frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
+
+    tracked_points.push_back(pupil.position[0]);
+    for(int i = (tracked_points.size() > 50) ? tracked_points.size()-50 : 1; i < tracked_points.size(); i++)
     {
-      //cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
-      cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), 2, cv::Scalar(255), 2);
+      cv::line(frame, tracked_points[i-1], tracked_points[i], cv::Scalar(245), 1);
     }
+    // just that it's not getting too big...
+    if(tracked_points.size() > 51)
+      tracked_points.clear();
 
     // show eye frame
     cv::imshow(EYE_WINDOW_NAME, frame);

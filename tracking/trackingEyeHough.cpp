@@ -77,7 +77,7 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
 
   // check if found circle is close enough
-  if(min < 3)
+  if(min < 9)
   {
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
