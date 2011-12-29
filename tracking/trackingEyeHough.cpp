@@ -16,22 +16,34 @@ TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
 
   // this is necessary to give the camera some time to adjust to the current
   // illumination of the scene
-  for(int i = 0; i < 10; i++)
-  {
-    m_eye->getFrame();
-    sleep(1); 
-  }
+  //for(int i = 0; i < 10; i++)
+  //{
+    //m_eye->getFrame();
+    //sleep(1); 
+  //}
 
-  TrackedPupil pupils;
-  HoughCirclesPupil(pupils);
+  //TrackedPupil pupils;
+  //HoughCirclesPupil(pupils);
 
-  CallbackData callback_data;
-  callback_data.detected_positions = &pupils;
-  callback_data.pupil_to_track = &m_curr_pupil;
+  //CallbackData callback_data;
+  //callback_data.detected_positions = &pupils;
+  //callback_data.pupil_to_track = &m_curr_pupil;
 
-  cv::imshow(INPUT_WINDOW_NAME, pupils.frame);
-  cv::setMouseCallback(INPUT_WINDOW_NAME, mouse_callback, &callback_data);
-  PAUSE;
+  //cv::imshow(INPUT_WINDOW_NAME, pupils.frame);
+  //cv::setMouseCallback(INPUT_WINDOW_NAME, mouse_callback, &callback_data);
+  //PAUSE;
+  //
+  TrackedPupil tmp;
+  std::cout << "bla1" << std::endl;
+  tmp.position.push_back(cv::Point2f(0,0));
+  std::cout << "bla2" << std::endl;
+  tmp.radius.push_back(0);
+  std::cout << "bla3" << std::endl;
+  tmp.frame = m_eye->getFrame();
+  std::cout << "bla4" << std::endl;
+
+  m_curr_pupil = tmp;
+  
 
 }
 
@@ -51,7 +63,7 @@ TrackedPupil TrackingEyeHough::getPupil()
 
   // find closest circle
   double min = std::numeric_limits<double>::max();
-  std::cout << "found " << pupil.position.size() << " pupils" << std::endl;
+  //std::cout << "found " << pupil.position.size() << " pupils" << std::endl;
   for(int i = 0; i < pupil.position.size(); i++)
   {
     double dist = distance(m_curr_pupil.position[0], pupil.position[i]);
@@ -65,7 +77,7 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
 
   // check if found circle is close enough
-  if(min < 5)
+  if(min < 3)
   {
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
