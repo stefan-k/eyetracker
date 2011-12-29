@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
-  : m_eye_cam(eye_cam), m_bw_threshold(25), m_hough_minDist(30), m_hough_dp(1),
+  : m_eye_cam(eye_cam), m_bw_threshold(25), m_hough_minDist(30), m_hough_dp(2),
     m_hough_param1(30), m_hough_param2(10), m_hough_minRadius(0), m_hough_maxRadius(40),
     m_show_binary(show_binary)
 {
@@ -100,7 +100,7 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   //for(int i = 0; i < 1; i++)
     //cv::erode(binary, binary, cv::Mat());
 
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < 2; i++)
     cv::dilate(binary, binary, cv::Mat());
     //cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
 

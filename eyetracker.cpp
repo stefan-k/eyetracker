@@ -90,7 +90,8 @@ int main(int /*argc*/, char ** /*argv*/)
     for(int i = 0; i < pupil.position.size(); i++)
     //for(int i = 0; i < 1; i++)
     {
-      cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
+      //cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
+      cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), 2, cv::Scalar(255), 2);
     }
 
     // show eye frame
