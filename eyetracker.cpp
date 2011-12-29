@@ -47,7 +47,8 @@ int main(int /*argc*/, char ** /*argv*/)
   cv::VideoWriter writer;
   if(VIDEO_OUTPUT)
   {
-    writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
+    //writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
+    writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
     if (!writer.isOpened())
     {
       std::cout << "[Error] Cannot encode video with fallback codec!" << std::endl;
