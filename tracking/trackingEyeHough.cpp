@@ -39,6 +39,7 @@ TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
   tmp.frame = m_eye->getFrame();
 
   m_curr_pupil = tmp;
+  m_prev_pupil = tmp;
   
 
 }
@@ -53,7 +54,9 @@ TrackedPupil TrackingEyeHough::getPupil()
 {
   TrackedPupil pupil;
   // temporary pupil which is updated for every frame
-  TrackedPupil tmp_pupil;
+  TrackedPupil tmp_pupil, tmp_prev_pupil;
+  tmp_prev_pupil = m_prev_pupil;
+  m_prev_pupil = m_curr_pupil;
   tmp_pupil = m_curr_pupil;
   HoughCirclesPupil(pupil);
 
@@ -79,6 +82,8 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
   else
   {
+    //m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x + tmp_prev_pupil.position[0].x)/3;
+    //m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y + tmp_prev_pupil.position[0].y)/3;
     m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
     m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
     m_curr_pupil.frame = tmp_pupil.frame.clone();
@@ -106,7 +111,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   equalizeHist(gray, gray);
 
 
-  cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 3, 3);
+  cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 5, 5);
+  //gray_blur = gray.clone();
   cv::threshold(gray_blur, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
   //for(int i = 0; i < 40; i++)

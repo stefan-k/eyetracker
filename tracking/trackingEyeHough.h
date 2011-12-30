@@ -29,6 +29,7 @@ class TrackingEyeHough
 
   EyeCapture* m_eye;
   TrackedPupil m_curr_pupil;
+  TrackedPupil m_prev_pupil;
   const int m_eye_cam;
 
   cv::Mat m_binary_frame;
