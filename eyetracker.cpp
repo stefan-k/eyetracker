@@ -33,8 +33,8 @@
 #define TRACKBAR_HOUGH_MAXRADIUS  "Hough maxRadius"
 
 // CALIBRATION
-#define CALIBRATION_WINDOW_X      1024
-#define CALIBRATION_WINDOW_Y      768
+#define CALIBRATION_WINDOW_Y      512
+#define CALIBRATION_WINDOW_X      512
 #define CALIBRATION_WINDOW_NAME   "Calibration"
 
 /**
@@ -152,16 +152,61 @@ int main(int /*argc*/, char ** /*argv*/)
   eye.printParams();
 
   // CALIBRATION ROUTINE
-  cv::Mat calibWindow(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y, CV_8UC1, cv::Scalar(0));
-  std::vector<cv::Point> calibPoints;
-  calibPoints.push_back(cv::Point(5,6));
-  calibPoints.push_back(cv::Point(9,9));
+  std::vector<cv::Point2f> calibPoints;
+  calibPoints.push_back(cv::Point2f(20,20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_Y-20,20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_Y-20,CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(20,CALIBRATION_WINDOW_X-20));
+  std::vector<cv::Point2f> pupilPos;
+
   for(int i = 0; i < calibPoints.size(); i++)
   {
+    cv::Mat calibWindow(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y, CV_8UC1, cv::Scalar(0));
     cv::circle(calibWindow, calibPoints[i], 4, cv::Scalar(255), 2);
+    cv::imshow(CALIBRATION_WINDOW_NAME, calibWindow);
+    for(;;)
+    {
+      pupil = eye.getPupil();
+      std::cout << pupil.position[0].x << " " << pupil.position[0].y << std::endl;
+      //frame = pupil.frame.clone();
+      if(cv::waitKey(10) >= 0) break;
+    }
+    pupilPos.push_back(pupil.position[0]);
   }
-  cv::imshow(CALIBRATION_WINDOW_NAME, calibWindow);
-  cv::waitKey(); 
+
+  cv::Mat homography;
+  //homography = cv::findHomography(pupilPos, calibPoints, CV_RANSAC);
+  //homography = cv::findHomography(calibPoints, pupilPos,  0);
+  homography = cv::findHomography(pupilPos, calibPoints,  0);
+
+  for(int j = 0; j < 3; j++)
+  {
+    for(int k = 0; k < 3; k++)
+    {
+      std::cout << homography.at<float>(j,k) << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  cv::Mat frame_warped;
+  for(;;)
+  {
+    pupil = eye.getPupil();
+    frame = pupil.frame.clone();
+    if (frame.empty())
+    {
+      std::cout << "[Warning] EYE: Skipping empty frame." << std::endl;
+      continue;
+    }
+
+    //cv::warpPerspective(frame,frame_warped,homography,frame.size());
+    //cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y), cv::INTER_CUBIC);
+    cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
+
+
+    cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
+    if(cv::waitKey(10) >= 0) break;
+  }
 
 
 
