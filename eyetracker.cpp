@@ -202,7 +202,15 @@ int main(int /*argc*/, char ** /*argv*/)
     //cv::warpPerspective(frame,frame_warped,homography,frame.size());
     //cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y), cv::INTER_CUBIC);
     cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
+    cv::Point2f new_point;
 
+    new_point.x = homography.at<double>(0,0)*pupil.position[0].x + homography.at<double>(0,1)*pupil.position[0].y + homography.at<double>(0,2)*1;
+    new_point.y = homography.at<double>(1,0)*pupil.position[0].x + homography.at<double>(1,1)*pupil.position[0].y + homography.at<double>(1,2)*1;
+    double z = homography.at<double>(2,0)*pupil.position[0].x + homography.at<double>(2,1)*pupil.position[0].y + homography.at<double>(2,2)*1;
+    new_point.x = new_point.x/z;
+    new_point.y = new_point.y/z;
+
+    cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
 
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
     if(cv::waitKey(10) >= 0) break;
