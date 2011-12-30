@@ -154,9 +154,27 @@ int main(int /*argc*/, char ** /*argv*/)
   // CALIBRATION ROUTINE
   std::vector<cv::Point2f> calibPoints;
   calibPoints.push_back(cv::Point2f(20,20));
-  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_Y-20,20));
-  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_Y-20,CALIBRATION_WINDOW_Y-20));
-  calibPoints.push_back(cv::Point2f(20,CALIBRATION_WINDOW_X-20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(20,CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, 20));
+  calibPoints.push_back(cv::Point2f(20, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(3*CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/4));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y/4));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, 3*CALIBRATION_WINDOW_Y/4));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, 20));
+  calibPoints.push_back(cv::Point2f(20, CALIBRATION_WINDOW_Y/4));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, CALIBRATION_WINDOW_Y/4));
+  calibPoints.push_back(cv::Point2f(3*CALIBRATION_WINDOW_X/4, 20));
+  calibPoints.push_back(cv::Point2f(20, 3*CALIBRATION_WINDOW_Y/4));
+  calibPoints.push_back(cv::Point2f(3*CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, 3*CALIBRATION_WINDOW_Y/4));
   std::vector<cv::Point2f> pupilPos;
 
   for(int i = 0; i < calibPoints.size(); i++)
@@ -164,21 +182,29 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat calibWindow(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y, CV_8UC1, cv::Scalar(0));
     cv::circle(calibWindow, calibPoints[i], 4, cv::Scalar(255), 2);
     cv::imshow(CALIBRATION_WINDOW_NAME, calibWindow);
+    cv::Point2f pointsum(0,0);
+    int j = 0;
     for(;;)
     {
       pupil = eye.getPupil();
+      frame = pupil.frame.clone();
+      cv::imshow(EYE_WINDOW_NAME, frame);
       std::cout << pupil.position[0].x << " " << pupil.position[0].y << std::endl;
+      //pointsum += pupil.position[0];
       //frame = pupil.frame.clone();
       if(cv::waitKey(10) >= 0) break;
+      j++;
     }
+    //pupilPos.push_back(cv::Point2f(pointsum.x/j, pointsum.y/j));
     pupilPos.push_back(pupil.position[0]);
   }
 
   cv::Mat homography;
   //homography = cv::findHomography(pupilPos, calibPoints, CV_RANSAC);
-  //homography = cv::findHomography(calibPoints, pupilPos,  0);
-  homography = cv::findHomography(pupilPos, calibPoints,  0);
+  //homography = cv::findHomography(calibPoints, pupilPos,  CV_RANSAC);
+  homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
 
+  // Print Matrix
   for(int j = 0; j < 3; j++)
   {
     for(int k = 0; k < 3; k++)
@@ -188,6 +214,8 @@ int main(int /*argc*/, char ** /*argv*/)
     std::cout << std::endl;
   }
 
+  // MAPPING
+  // Warp Eye-Image (doesn't work) and map eyemovement onto screen
   cv::Mat frame_warped;
   for(;;)
   {
@@ -212,6 +240,8 @@ int main(int /*argc*/, char ** /*argv*/)
 
     cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
 
+    cv::circle(frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
+    cv::imshow(EYE_WINDOW_NAME, frame);
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
     if(cv::waitKey(10) >= 0) break;
   }

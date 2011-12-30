@@ -34,13 +34,9 @@ TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
   //PAUSE;
   //
   TrackedPupil tmp;
-  std::cout << "bla1" << std::endl;
   tmp.position.push_back(cv::Point2f(0,0));
-  std::cout << "bla2" << std::endl;
   tmp.radius.push_back(0);
-  std::cout << "bla3" << std::endl;
   tmp.frame = m_eye->getFrame();
-  std::cout << "bla4" << std::endl;
 
   m_curr_pupil = tmp;
   
@@ -77,7 +73,7 @@ TrackedPupil TrackingEyeHough::getPupil()
   }
 
   // check if found circle is close enough
-  if(min < 5)
+  if(min < 3)
   {
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
@@ -102,7 +98,7 @@ TrackedPupil TrackingEyeHough::getPupil()
 //------------------------------------------------------------------------------
 void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 {
-  cv::Mat gray, binary, edges;
+  cv::Mat gray, gray_blur, binary, edges;
   cv::Rect roi(1/4*640+60, 1/4*480+60, 640/2-120, 480/2-120);
 
   gray = m_eye->getFrame();
@@ -110,8 +106,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   equalizeHist(gray, gray);
 
 
-  cv::GaussianBlur(gray, gray, cv::Size(9,9), 3, 3);
-  cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
+  cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 3, 3);
+  cv::threshold(gray_blur, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
   //for(int i = 0; i < 40; i++)
   //{
@@ -182,7 +178,6 @@ void mouse_callback(int event, int x, int y, int flags, void* user_data)
         }
       }
 
-      //LineToTrack ltt;
       TrackedPupil pupil;
       pupil.position.push_back(position);
       pupil.radius.push_back(radius);
