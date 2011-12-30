@@ -32,6 +32,11 @@
 #define TRACKBAR_HOUGH_MINRADIUS  "Hough minRadius"
 #define TRACKBAR_HOUGH_MAXRADIUS  "Hough maxRadius"
 
+// CALIBRATION
+#define CALIBRATION_WINDOW_X      1024
+#define CALIBRATION_WINDOW_Y      768
+#define CALIBRATION_WINDOW_NAME   "Calibration"
+
 /**
  * @brief The main entry point 
  */
@@ -145,6 +150,21 @@ int main(int /*argc*/, char ** /*argv*/)
   }
   // print parameters
   eye.printParams();
+
+  // CALIBRATION ROUTINE
+  cv::Mat calibWindow(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y, CV_8UC1, cv::Scalar(0));
+  std::vector<cv::Point> calibPoints;
+  calibPoints.push_back(cv::Point(5,6));
+  calibPoints.push_back(cv::Point(9,9));
+  for(int i = 0; i < calibPoints.size(); i++)
+  {
+    cv::circle(calibWindow, calibPoints[i], 4, cv::Scalar(255), 2);
+  }
+  cv::imshow(CALIBRATION_WINDOW_NAME, calibWindow);
+  cv::waitKey(); 
+
+
+
 
   return 0;
 }
