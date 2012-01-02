@@ -34,13 +34,24 @@ cv::Mat EyeCapture::getFrame()
   *(m_eye) >> m_frame;
   if(m_convert_to_gray)
   {
-    //cv::Mat Y, Cr, Cb;
+    // YCrCb
+    //cv::Mat Y(m_frame.rows, m_frame.cols, CV_8UC1, cv::Scalar(0));
+    //cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2YCrCb);
+    //int from_to[] = {0, 0};
+    //cv::mixChannels(&m_frame, 1, &Y, 1, from_to, 1);
+
+    // HLS
     cv::Mat Y(m_frame.rows, m_frame.cols, CV_8UC1, cv::Scalar(0));
-    cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2YCrCb);
-    //cv::Mat out[] = {Y, Cr, Cb};
-    //cv::split(m_frame, out);
-    int from_to[] = {0, 0};
+    cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2HLS);
+    int from_to[] = {1, 0};
     cv::mixChannels(&m_frame, 1, &Y, 1, from_to, 1);
+    
+    // HSV
+    //cv::Mat Y(m_frame.rows, m_frame.cols, CV_8UC1, cv::Scalar(0));
+    //cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2HSV);
+    //int from_to[] = {2, 0};
+    //cv::mixChannels(&m_frame, 1, &Y, 1, from_to, 1);
+
     return Y.clone();
     //cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2GRAY);
   }
