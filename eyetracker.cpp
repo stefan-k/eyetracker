@@ -189,7 +189,7 @@ int main(int /*argc*/, char ** /*argv*/)
       pupil = eye.getPupil();
       frame = pupil.frame.clone();
       cv::imshow(EYE_WINDOW_NAME, frame);
-      std::cout << pupil.position[0].x << " " << pupil.position[0].y << std::endl;
+      //std::cout << pupil.position[0].x << " " << pupil.position[0].y << std::endl;
       //pointsum += pupil.position[0];
       //frame = pupil.frame.clone();
       if(cv::waitKey(10) >= 0) break;
