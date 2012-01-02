@@ -75,7 +75,8 @@ TrackedPupil TrackingEyeHough::getPupil()
     }
   }
 
-  // Do all the fancy stuff here.
+  // Do all the fancy ellipse stuff here.
+  // First: Define bounding box (ROI) based on HoughCircle
   int tol = 5;
   int maxheight = m_binary_frame.rows;
   int maxwidth = m_binary_frame.cols;
@@ -85,31 +86,36 @@ TrackedPupil TrackingEyeHough::getPupil()
   int y2 = y1 + 2*(tmp_pupil.radius[0]+tol) > maxheight ? 2 : 2*(tmp_pupil.radius[0]+tol);
   cv::Rect roi_pupil(x1, y1, x2, y2);
   cv::Mat extracted_pupil;
-  //std::cout << "bla1" << std::endl;
   extracted_pupil = m_binary_frame(roi_pupil).clone();
-  //extracted_pupil = m_binary_frame.clone();
-  //extracted_pupil = tmp_pupil.frame(roi_pupil).clone();
-  //std::cout << "bla2" << std::endl;
+  
+  // Find contours of pupil
   std::vector<std::vector<cv::Point> > contours;
   std::vector<cv::Vec4i> hierarchy;
   cv::findContours(extracted_pupil, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, 
                    cv::Point(x1, y1));
+  // get convex hull of pupil to make it more stable
   std::vector<cv::Point> hull;
   std::vector<std::vector<cv::Point> > hull_t;
-  //std::cout << "bla3" << std::endl;
-  if(contours.size() > 0)
+  if(contours.size() > 0) // don't care if no contours are found
   {
     cv::convexHull(contours[0], hull);
+    // the next line is just that draw contours stops complaining
     hull_t.push_back(hull);
-    //std::cout << "bla4" << std::endl;
-    cv::drawContours(tmp_pupil.frame, contours, -1, cv::Scalar(255));
-    //std::cout << "bla5" << std::endl;
-    cv::drawContours(tmp_pupil.frame, hull_t, -1, cv::Scalar(235));
-    //std::cout << "bla6" << std::endl;
+    //cv::drawContours(tmp_pupil.frame, contours, -1, cv::Scalar(255));
+    //cv::drawContours(tmp_pupil.frame, hull_t, -1, cv::Scalar(235));
+    //
+    // For an ellipse, apparently 5 points are necessary
+    if(hull.size() > 5)
+    {
+      cv::RotatedRect rect_n = cv::fitEllipse(hull);
+      cv::ellipse(tmp_pupil.frame, rect_n, cv::Scalar(200));
+      tmp_pupil.position[0] = rect_n.center;
+    }
   }
 
   // check if found circle is close enough
-  if(min < 9)
+  // Actually, not necessary anymore.
+  if(min < 0)
   {
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
@@ -117,8 +123,11 @@ TrackedPupil TrackingEyeHough::getPupil()
   {
     //m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x + tmp_prev_pupil.position[0].x)/3;
     //m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y + tmp_prev_pupil.position[0].y)/3;
-    m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
-    m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
+    //m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
+    //m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
+    // With the ellipse, building the mean isn't necessary
+    m_curr_pupil.position[0].x = tmp_pupil.position[0].x;
+    m_curr_pupil.position[0].y = tmp_pupil.position[0].y;
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
 
