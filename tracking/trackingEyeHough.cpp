@@ -75,6 +75,39 @@ TrackedPupil TrackingEyeHough::getPupil()
     }
   }
 
+  // Do all the fancy stuff here.
+  int tol = 5;
+  int maxheight = m_binary_frame.rows;
+  int maxwidth = m_binary_frame.cols;
+  int x1 = tmp_pupil.position[0].x - tmp_pupil.radius[0] - tol < 0 ? 0 : tmp_pupil.position[0].x - tmp_pupil.radius[0] - tol;
+  int y1 = tmp_pupil.position[0].y - tmp_pupil.radius[0] - tol < 0 ? 0 : tmp_pupil.position[0].y - tmp_pupil.radius[0] - tol;
+  int x2 = x1 + 2*(tmp_pupil.radius[0]+tol) > maxwidth ? 2 : 2*(tmp_pupil.radius[0]+tol);
+  int y2 = y1 + 2*(tmp_pupil.radius[0]+tol) > maxheight ? 2 : 2*(tmp_pupil.radius[0]+tol);
+  cv::Rect roi_pupil(x1, y1, x2, y2);
+  cv::Mat extracted_pupil;
+  //std::cout << "bla1" << std::endl;
+  extracted_pupil = m_binary_frame(roi_pupil).clone();
+  //extracted_pupil = m_binary_frame.clone();
+  //extracted_pupil = tmp_pupil.frame(roi_pupil).clone();
+  //std::cout << "bla2" << std::endl;
+  std::vector<std::vector<cv::Point> > contours;
+  std::vector<cv::Vec4i> hierarchy;
+  cv::findContours(extracted_pupil, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, 
+                   cv::Point(x1, y1));
+  std::vector<cv::Point> hull;
+  std::vector<std::vector<cv::Point> > hull_t;
+  //std::cout << "bla3" << std::endl;
+  if(contours.size() > 0)
+  {
+    cv::convexHull(contours[0], hull);
+    hull_t.push_back(hull);
+    //std::cout << "bla4" << std::endl;
+    cv::drawContours(tmp_pupil.frame, contours, -1, cv::Scalar(255));
+    //std::cout << "bla5" << std::endl;
+    cv::drawContours(tmp_pupil.frame, hull_t, -1, cv::Scalar(235));
+    //std::cout << "bla6" << std::endl;
+  }
+
   // check if found circle is close enough
   if(min < 9)
   {
@@ -133,18 +166,16 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 
   std::vector<cv::Vec3f> circles;
 
-  int test = m_hough_param2;
-  while(circles.size() < 8 && test > 0)
+  int adapt_param2 = m_hough_param2;
+  while(circles.size() < 8 && adapt_param2 > 0)
   {
     cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, m_hough_dp, 
-                     m_hough_minDist, m_hough_param1, test, m_hough_minRadius, 
+                     m_hough_minDist, m_hough_param1, adapt_param2, m_hough_minRadius, 
                      m_hough_maxRadius);
 
     // decrease threshold if not enough circles are found
-    test -= 1;
+    adapt_param2 -= 1;
   }
-
-  //std::cout << "Circles found: " << circles.size() << " at test " << test << std::endl;
 
   // push back the found circles
   for(int i = 0; i < circles.size(); i++)
