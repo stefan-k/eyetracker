@@ -8,8 +8,8 @@
 
 //------------------------------------------------------------------------------
 TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
-  : m_eye_cam(eye_cam), m_bw_threshold(10), m_hough_minDist(30), m_hough_dp(2),
-    m_hough_param1(30), m_hough_param2(1), m_hough_minRadius(5), m_hough_maxRadius(40),
+  : m_eye_cam(eye_cam), m_bw_threshold(5), m_hough_minDist(30), m_hough_dp(2),
+    m_hough_param1(30), m_hough_param2(1), m_hough_minRadius(10), m_hough_maxRadius(40),
     m_show_binary(show_binary)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
@@ -77,7 +77,7 @@ TrackedPupil TrackingEyeHough::getPupil()
 
   // Do all the fancy ellipse stuff here.
   // First: Define bounding box (ROI) based on HoughCircle
-  int tol = 5;
+  int tol = 2;
   int maxheight = m_binary_frame.rows;
   int maxwidth = m_binary_frame.cols;
   int x1 = tmp_pupil.position[0].x - tmp_pupil.radius[0] - tol < 0 ? 0 : tmp_pupil.position[0].x - tmp_pupil.radius[0] - tol;
@@ -115,7 +115,8 @@ TrackedPupil TrackingEyeHough::getPupil()
 
   // check if found circle is close enough
   // Actually, not necessary anymore.
-  if(min < 0)
+  //if(min < 0)
+  if(distance(m_curr_pupil.position[0], tmp_pupil.position[0]) < 0)
   {
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
@@ -123,11 +124,11 @@ TrackedPupil TrackingEyeHough::getPupil()
   {
     //m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x + tmp_prev_pupil.position[0].x)/3;
     //m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y + tmp_prev_pupil.position[0].y)/3;
-    //m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
-    //m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
+    m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
+    m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
     // With the ellipse, building the mean isn't necessary
-    m_curr_pupil.position[0].x = tmp_pupil.position[0].x;
-    m_curr_pupil.position[0].y = tmp_pupil.position[0].y;
+    //m_curr_pupil.position[0].x = tmp_pupil.position[0].x;
+    //m_curr_pupil.position[0].y = tmp_pupil.position[0].y;
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
 
@@ -156,8 +157,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   cv::erode(gray, gray, cv::Mat());
 
 
-  cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 5, 5);
-  //gray_blur = gray.clone();
+  //cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 5, 5);
+  gray_blur = gray.clone();
   cv::threshold(gray_blur, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
   //for(int i = 0; i < 40; i++)
