@@ -157,8 +157,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   cv::erode(gray, gray, cv::Mat());
 
 
-  //cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 5, 5);
-  gray_blur = gray.clone();
+  cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 5, 5);
+  //gray_blur = gray.clone();
   cv::threshold(gray_blur, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
   //for(int i = 0; i < 40; i++)
