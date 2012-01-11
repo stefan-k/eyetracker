@@ -1,5 +1,5 @@
 /**
- * @file trckingHough.h
+ * @file trackingHough.h
  * @brief Captures the frames of the eye
  *
  * Image Processing and Pattern Recognition

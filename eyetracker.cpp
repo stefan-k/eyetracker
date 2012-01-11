@@ -10,6 +10,7 @@
 #include "eyetracker.h"
 #include "eyecapture.cpp"
 #include "headcapture.cpp"
+#include "tracking/trackingHead.cpp"
 #include "tracking/trackingEyeHough.cpp"
 
 #define EYE_CAM 1
@@ -62,7 +63,8 @@ int main(int /*argc*/, char ** /*argv*/)
   }
 
 #ifdef CAPTURE_HEAD
-  HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
+  //HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
+  TrackingHead head(HEAD_CAM, CONVERT_TO_GRAY);
 #endif
 
   // define all trackbar values
@@ -113,8 +115,8 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::createTrackbar(TRACKBAR_HOUGH_MINDIST,   EYE_WINDOW_NAME, &minDist,   255, 0, NULL);
     cv::createTrackbar(TRACKBAR_HOUGH_PARAM1,    EYE_WINDOW_NAME, &param1,    255, 0, NULL);
     cv::createTrackbar(TRACKBAR_HOUGH_PARAM2,    EYE_WINDOW_NAME, &param2,    255, 0, NULL);
-    cv::createTrackbar(TRACKBAR_HOUGH_MINRADIUS, EYE_WINDOW_NAME, &minRadius, 255, 0, NULL);
-    cv::createTrackbar(TRACKBAR_HOUGH_MAXRADIUS, EYE_WINDOW_NAME, &maxRadius, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MINRADIUS, EYE_WINDOW_NAME, &minRadius,  80, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MAXRADIUS, EYE_WINDOW_NAME, &maxRadius, 100, 0, NULL);
     if(cv::waitKey(10) >= 0) break;
 
     // get new Trackbar values and update 
