@@ -14,7 +14,7 @@
 
 #define EYE_CAM 1
 #define HEAD_CAM 0
-//#define CAPTURE_HEAD
+#define CAPTURE_HEAD
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
 
