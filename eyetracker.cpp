@@ -63,8 +63,7 @@ int main(int /*argc*/, char ** /*argv*/)
   }
 
 #ifdef CAPTURE_HEAD
-  //HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
-  TrackingHead head(HEAD_CAM, 0);
+  TrackingHead head(HEAD_CAM, 1);
 #endif
 
   // define all trackbar values (EYE CAM)
@@ -146,6 +145,9 @@ int main(int /*argc*/, char ** /*argv*/)
     if(cv::waitKey(10) >= 0) break;
 
 #ifdef CAPTURE_HEAD
+    // update this one accordingly
+    int h_param2 = (int)head.getHoughParam2();
+
     // show head frame
     cv::imshow(HEAD_WINDOW_NAME, head_frame);
     cv::createTrackbar(TRACKBAR_BW_THRESHOLD,    HEAD_WINDOW_NAME, &h_bw_thresh, 255, 0, NULL);

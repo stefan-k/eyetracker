@@ -20,7 +20,7 @@
 
 //------------------------------------------------------------------------------
 TrackingHead::TrackingHead(const int head_cam, int show_binary)
-  : m_head_cam(head_cam), m_bw_threshold(30), m_show_binary(show_binary),
+  : m_head_cam(head_cam), m_bw_threshold(50), m_show_binary(show_binary),
     m_hough_minDist(10), m_hough_dp(2), m_hough_param1(30), m_hough_param2(1),
     m_hough_minRadius(5), m_hough_maxRadius(40)
 {
@@ -55,20 +55,30 @@ void TrackingHead::HoughCirclesMarkers()
 
   cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY);
 
-  for(int i = 0; i < 2; i++)
-    cv::erode(binary, binary, cv::Mat());
+  for(int i = 0; i < 8; i++)
+    cv::dilate(binary, binary, cv::Mat());
 
   std::vector<cv::Vec3f> circles;
 
-  int adapt_param2 = m_hough_param2;
-  while(circles.size() < 8 && adapt_param2 > 0)
+  //int adapt_param2 = m_hough_param2;
+  int count = 0;
+  m_hough_param2++;
+  while(circles.size() != 4 && m_hough_param2 > 0)
   {
     cv::HoughCircles(binary, circles, CV_HOUGH_GRADIENT, m_hough_dp, 
-                     m_hough_minDist, m_hough_param1, adapt_param2, m_hough_minRadius, 
+                     m_hough_minDist, m_hough_param1, m_hough_param2, m_hough_minRadius, 
                      m_hough_maxRadius);
 
     // decrease threshold if not enough circles are found
-    adapt_param2 -= 1;
+    if(circles.size() < 4)
+      m_hough_param2--;
+    
+    if(circles.size() > 4)
+      m_hough_param2++;
+
+    if(count > 40)
+      break;
+    count++;
   }
 
   m_circles = circles;
