@@ -1,3 +1,19 @@
 \section{Introduction}\label{introduction}
 
+The goal of this project is the implementation of an eye tracking algorithm using two cameras, one to track the eye movement and one to estimate the position of the head with respect to the monitor. 
+The eye movement is then mapped onto the computer screen. 
+The camera tracking the eye movement is mounted on a spectacle frame facing one eye, therefore being unaffected by movements of the head. 
 
+The hardware design is similar to the one already in use by the (impressive) EyeWriter project (www.eyewriter.org). 
+Illumination with infrared LEDs makes it easier to segment the pupil. This improves the tracking significantly. 
+In order for this to work properly, the infrared cut-off filter of the eye camera has to be removed to capture infrared light. 
+
+Movement of the head changes the mapping of the eye movement to the screen. Therefore the head position has to be estimated as well.
+With this additional information it is possible to compute the mapping independent of the head position. 
+For this task four markers -- in our setup infrared LEDs -- are mounted in form of a rectangle onto the spectacle frame. 
+The built-in webcam of a laptop segments this LEDs and computes a relative homography. 
+A IR filter (a piece of a floppy disc) in front of the laptop webcam assures that only the IR light is captured. 
+
+The methods that can be used for this tasks are limited, since real-time is an essential property for this project.
+
+The software is implemented using the open source computer vision library OpenCV.
