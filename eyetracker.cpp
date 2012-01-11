@@ -64,17 +64,26 @@ int main(int /*argc*/, char ** /*argv*/)
 
 #ifdef CAPTURE_HEAD
   //HeadCapture head(HEAD_CAM, CONVERT_TO_GRAY);
-  TrackingHead head(HEAD_CAM, CONVERT_TO_GRAY);
+  TrackingHead head(HEAD_CAM, 0);
 #endif
 
-  // define all trackbar values
+  // define all trackbar values (EYE CAM)
   int bw_thresh = eye.getBwThreshold();
   int minDist = (int)eye.getHoughMinDist();
   // NOTE: DP is useless, since its mandatory to be float
   int param1 = (int)eye.getHoughParam1();
   int param2 = (int)eye.getHoughParam2();
-  int minRadius = (int) eye.getHoughMinRadius();
-  int maxRadius = (int) eye.getHoughMaxRadius();
+  int minRadius = (int)eye.getHoughMinRadius();
+  int maxRadius = (int)eye.getHoughMaxRadius();
+
+  // define all trackbar values (HEAD CAM)
+  int h_bw_thresh = head.getBwThreshold();
+  int h_minDist = (int)head.getHoughMinDist();
+  // NOTE: DP is useless, since its mandatory to be float
+  int h_param1 = (int)head.getHoughParam1();
+  int h_param2 = (int)head.getHoughParam2();
+  int h_minRadius = (int)head.getHoughMinRadius();
+  int h_maxRadius = (int)head.getHoughMaxRadius();
 
   std::vector<cv::Point2f> tracked_points;
 
@@ -139,7 +148,27 @@ int main(int /*argc*/, char ** /*argv*/)
 #ifdef CAPTURE_HEAD
     // show head frame
     cv::imshow(HEAD_WINDOW_NAME, head_frame);
+    cv::createTrackbar(TRACKBAR_BW_THRESHOLD,    HEAD_WINDOW_NAME, &h_bw_thresh, 255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MINDIST,   HEAD_WINDOW_NAME, &h_minDist,   255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_PARAM1,    HEAD_WINDOW_NAME, &h_param1,    255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_PARAM2,    HEAD_WINDOW_NAME, &h_param2,    255, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MINRADIUS, HEAD_WINDOW_NAME, &h_minRadius,  80, 0, NULL);
+    cv::createTrackbar(TRACKBAR_HOUGH_MAXRADIUS, HEAD_WINDOW_NAME, &h_maxRadius, 100, 0, NULL);
     if(cv::waitKey(10) >= 0) break;
+
+    // get new Trackbar values and update 
+    h_bw_thresh = cv::getTrackbarPos(TRACKBAR_BW_THRESHOLD,    HEAD_WINDOW_NAME);
+    h_minDist   = cv::getTrackbarPos(TRACKBAR_HOUGH_MINDIST,   HEAD_WINDOW_NAME);
+    h_param1    = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM1,    HEAD_WINDOW_NAME);
+    h_param2    = cv::getTrackbarPos(TRACKBAR_HOUGH_PARAM2,    HEAD_WINDOW_NAME);
+    h_minRadius = cv::getTrackbarPos(TRACKBAR_HOUGH_MINRADIUS, HEAD_WINDOW_NAME);
+    h_maxRadius = cv::getTrackbarPos(TRACKBAR_HOUGH_MAXRADIUS, HEAD_WINDOW_NAME);
+    head.setBwThreshold(h_bw_thresh);
+    head.setHoughMinDist(h_minDist);
+    head.setHoughParam1(h_param1);
+    head.setHoughParam2(h_param2);
+    head.setHoughMinRadius(h_minRadius);
+    head.setHoughMaxRadius(h_maxRadius);
 #endif
 
 
