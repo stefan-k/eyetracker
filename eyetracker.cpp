@@ -235,7 +235,8 @@ int main(int /*argc*/, char ** /*argv*/)
   cv::Mat homography;
   //homography = cv::findHomography(pupilPos, calibPoints, CV_RANSAC);
   //homography = cv::findHomography(calibPoints, pupilPos,  CV_RANSAC);
-  homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
+  //homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
+  homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
 
   // Print Matrix
   for(int j = 0; j < 3; j++)
