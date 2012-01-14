@@ -80,6 +80,7 @@ void TrackingHead::EllipseMarkers()
       cv::RotatedRect rect_n = cv::fitEllipse(contours[i]);
       cv::ellipse(m_frame, rect_n, cv::Scalar(200));
     }
+    //for(int j = 0; 
   }
 }
 

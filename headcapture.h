@@ -18,11 +18,10 @@
 
 class HeadCapture
 {
-  cv::VideoCapture* m_eye;
-  //cv::VideoCapture eye;
+  cv::VideoCapture* m_head;
   cv::Mat m_frame;
-  unsigned m_eye_height;
-  unsigned m_eye_width;
+  unsigned m_head_height;
+  unsigned m_head_width;
   const bool m_convert_to_gray;
 
 public:
