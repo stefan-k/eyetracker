@@ -27,6 +27,9 @@ class TrackingHead
   cv::Mat m_binary_frame;
   int m_bw_threshold;
   bool m_show_binary;
+  std::vector<cv::Point2f> m_corners;
+  std::vector<cv::Point2f> m_markers;
+  cv::Mat m_homography;
   
   // HoughCircles Parameters
   double m_hough_minDist;
@@ -138,6 +141,11 @@ public:
   cv::Mat getBinaryFrame()
   {
     return m_binary_frame.clone();
+  }
+
+  cv::Mat getHomography()
+  {
+    return m_homography.clone();
   }
 
 private:
