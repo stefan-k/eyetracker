@@ -57,20 +57,24 @@ cv::Mat TrackingHead::getFrame()
 
   for(int i = 0; i < m_corners.size(); i++)
   {
-    double min = std::numeric_limits<double>::max();
+    //double min = std::numeric_limits<double>::max();
+    double max = 0;
     for(int j = 0; j < m_circles.size(); j++)
     {
       double dist = sqrt(pow(m_corners[i].x - m_circles[j][0],2) + 
                          pow(m_corners[i].y - m_circles[j][1],2));
-      if(dist < min)
+      //if(dist < min)
+      if(dist > max)
       {
-        min = dist;
+        //min = dist;
+        max = dist;
         m_markers[i] = cv::Point2f(m_circles[j][0], m_circles[j][1]);
       }
     }
   }
 
-  m_homography = cv::findHomography(m_markers, m_corners, 0);
+  //m_homography = cv::findHomography(m_markers, m_corners, 0);
+  m_homography = cv::getPerspectiveTransform(m_markers, m_corners);
   //m_homography = cv::findHomography(m_corners, m_markers, 0);
   // just for testing purposes
   //cv::Mat frame_warped;

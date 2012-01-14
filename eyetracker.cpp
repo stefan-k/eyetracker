@@ -244,9 +244,9 @@ int main(int /*argc*/, char ** /*argv*/)
     }
     head.getFrame();
     //if(cv::waitKey(40) >= 0) break;
-    double z = 1;
     cv::Mat head_homography = head.getHomography();
     //cv::invert(head_homography, head_homography);
+    double z = 1;
     transf_pupil.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
                      head_homography.at<double>(0,1)*pupil.position[0].y + 
                      head_homography.at<double>(0,2)*z;
@@ -261,13 +261,15 @@ int main(int /*argc*/, char ** /*argv*/)
     z = 1;
     //pupilPos.push_back(cv::Point2f(pointsum.x/j, pointsum.y/j));
     //pupilPos.push_back(pupil.position[0]);
+    //cv::perspectiveTransform(cv::Point2f(pupil.position[0].x,pupil.position[0].y), transf_pupil, head_homography);
     pupilPos.push_back(transf_pupil);
   }
 
   cv::Mat homography;
   //homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
   //homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
-  homography = cv::findHomography(pupilPos, calibPoints,  0);
+  //homography = cv::findHomography(pupilPos, calibPoints,  0);
+  homography = cv::getPerspectiveTransform(pupilPos, calibPoints);
 
   // Print Matrix
   for(int j = 0; j < 3; j++)
@@ -352,7 +354,8 @@ int main(int /*argc*/, char ** /*argv*/)
     {
       for(int k = 0; k < 3; k++)
       {
-        std::cout << homography2.at<float>(j,k) << " ";
+        //std::cout << homography2.at<float>(j,k) << " ";
+        std::cout << head_homography.at<float>(j,k) << " ";
       }
       std::cout << std::endl;
     }
