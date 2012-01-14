@@ -42,6 +42,16 @@ public:
    * @param 
    */
   cv::Mat getFrame();
+
+  unsigned getHeight()
+  {
+    return m_head_height;
+  }
+
+  unsigned getWidth()
+  {
+    return m_head_width;
+  }
   
   
 private:

@@ -21,6 +21,8 @@ class TrackingHead
 
   HeadCapture* m_head;
   const int m_head_cam;
+  unsigned m_frame_height;
+  unsigned m_frame_width;
   cv::Mat m_frame;
   cv::Mat m_binary_frame;
   int m_bw_threshold;

@@ -25,6 +25,8 @@ TrackingHead::TrackingHead(const int head_cam, int show_binary)
     m_hough_minRadius(0), m_hough_maxRadius(20)
 {
   m_head = new HeadCapture(m_head_cam, 1);
+  m_frame_height = m_head->getHeight();
+  m_frame_width = m_head->getWidth();
 
 }
 
