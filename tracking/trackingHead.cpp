@@ -37,7 +37,8 @@ cv::Mat TrackingHead::getFrame()
   for(int i = 0; i < 4; i++)
     cv::dilate(m_binary_frame, m_binary_frame, cv::Mat());
 
-  HoughCirclesMarkers();
+  //HoughCirclesMarkers();
+  EllipseMarkers();
   for(int i = 0; i < m_circles.size(); i++)
     cv::circle(m_frame, cv::Point2f(m_circles[i][0], m_circles[i][1]), m_circles[0][2], cv::Scalar(255), 2);
 
@@ -47,6 +48,39 @@ cv::Mat TrackingHead::getFrame()
     return m_binary_frame.clone();
   else
     return m_frame.clone();
+}
+void TrackingHead::EllipseMarkers()
+{
+  cv::Mat gray, binary;
+  m_head->getFrame();
+
+  binary = m_binary_frame.clone();
+  gray = m_frame.clone();
+
+  //for(int i = 0; i < 18; i++)
+    //cv::dilate(binary, binary, cv::Mat());
+
+  std::vector<cv::Vec3f> circles;
+
+  std::vector<std::vector<cv::Point> > contours;
+  std::vector<cv::Vec4i> hierarchy;
+  cv::findContours(m_binary_frame, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, 
+                   cv::Point(0, 0));
+
+  if(contours.size() < 4)
+    std::cout << "[HEAD TRACKING] Error: Too few markers found!" << std::endl;
+
+  if(contours.size() > 4)
+    std::cout << "[HEAD TRACKING] Error: Too many markers found!" << std::endl;
+
+  if(contours.size() == 4)
+  {
+    for(int i = 0; i < contours.size(); i++)
+    {
+      cv::RotatedRect rect_n = cv::fitEllipse(contours[i]);
+      cv::ellipse(m_frame, rect_n, cv::Scalar(200));
+    }
+  }
 }
 
 void TrackingHead::HoughCirclesMarkers()

@@ -156,6 +156,7 @@ private:
   TrackingHead& operator = (const TrackingHead&);
 
   void HoughCirclesMarkers();
+  void EllipseMarkers();
   
 };
 
