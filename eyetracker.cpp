@@ -63,7 +63,7 @@ int main(int /*argc*/, char ** /*argv*/)
   }
 
 #ifdef CAPTURE_HEAD
-  TrackingHead head(HEAD_CAM, 1);
+  TrackingHead head(HEAD_CAM, 0);
 #endif
 
   // define all trackbar values (EYE CAM)

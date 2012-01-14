@@ -20,9 +20,9 @@
 
 //------------------------------------------------------------------------------
 TrackingHead::TrackingHead(const int head_cam, int show_binary)
-  : m_head_cam(head_cam), m_bw_threshold(50), m_show_binary(show_binary),
+  : m_head_cam(head_cam), m_bw_threshold(40), m_show_binary(show_binary),
     m_hough_minDist(10), m_hough_dp(2), m_hough_param1(30), m_hough_param2(1),
-    m_hough_minRadius(5), m_hough_maxRadius(40)
+    m_hough_minRadius(0), m_hough_maxRadius(20)
 {
   m_head = new HeadCapture(m_head_cam, 1);
 
@@ -31,10 +31,11 @@ TrackingHead::TrackingHead(const int head_cam, int show_binary)
 cv::Mat TrackingHead::getFrame()
 {
   m_frame = m_head->getFrame().clone();
+  //equalizeHist(m_frame, m_frame);
   cv::threshold(m_frame.clone(), m_binary_frame, m_bw_threshold, 255, cv::THRESH_BINARY);
 
-  for(int i = 0; i < 2; i++)
-    cv::erode(m_binary_frame, m_binary_frame, cv::Mat());
+  for(int i = 0; i < 4; i++)
+    cv::dilate(m_binary_frame, m_binary_frame, cv::Mat());
 
   HoughCirclesMarkers();
   for(int i = 0; i < m_circles.size(); i++)
@@ -51,12 +52,15 @@ cv::Mat TrackingHead::getFrame()
 void TrackingHead::HoughCirclesMarkers()
 {
   cv::Mat gray, binary;
-  gray = m_head->getFrame();
+  //gray = m_head->getFrame();
+  m_head->getFrame();
 
-  cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY);
+  //cv::threshold(gray, binary, m_bw_threshold, 255, cv::THRESH_BINARY);
+  binary = m_binary_frame.clone();
+  gray = m_frame.clone();
 
-  for(int i = 0; i < 8; i++)
-    cv::dilate(binary, binary, cv::Mat());
+  //for(int i = 0; i < 18; i++)
+    //cv::dilate(binary, binary, cv::Mat());
 
   std::vector<cv::Vec3f> circles;
 
@@ -76,7 +80,7 @@ void TrackingHead::HoughCirclesMarkers()
     if(circles.size() > 4)
       m_hough_param2++;
 
-    if(count > 40)
+    if(count > 20)
       break;
     count++;
   }
