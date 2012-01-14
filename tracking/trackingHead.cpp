@@ -31,14 +31,14 @@ TrackingHead::TrackingHead(const int head_cam, int show_binary)
   m_corners.push_back(cv::Point2f(m_frame_width, 0));
   m_corners.push_back(cv::Point2f(m_frame_width, m_frame_height));
   m_corners.push_back(cv::Point2f(0, m_frame_height));
-  //m_markers.push_back(cv::Point2f(0, 0));
-  //m_markers.push_back(cv::Point2f(m_frame_width, 0));
-  //m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
-  //m_markers.push_back(cv::Point2f(0, m_frame_height));
   m_markers.push_back(cv::Point2f(0, 0));
-  m_markers.push_back(cv::Point2f(1, 0));
-  m_markers.push_back(cv::Point2f(1, 1));
-  m_markers.push_back(cv::Point2f(0, 1));
+  m_markers.push_back(cv::Point2f(m_frame_width, 0));
+  m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
+  m_markers.push_back(cv::Point2f(0, m_frame_height));
+  //m_markers.push_back(cv::Point2f(0, 0));
+  //m_markers.push_back(cv::Point2f(1, 0));
+  //m_markers.push_back(cv::Point2f(1, 1));
+  //m_markers.push_back(cv::Point2f(0, 1));
 }
 
 cv::Mat TrackingHead::getFrame()
@@ -47,7 +47,7 @@ cv::Mat TrackingHead::getFrame()
   //equalizeHist(m_frame, m_frame);
   cv::threshold(m_frame.clone(), m_binary_frame, m_bw_threshold, 255, cv::THRESH_BINARY);
 
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < 8; i++)
     cv::dilate(m_binary_frame, m_binary_frame, cv::Mat());
 
   //HoughCirclesMarkers();
