@@ -201,10 +201,10 @@ int main(int /*argc*/, char ** /*argv*/)
   calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,20));
   calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,CALIBRATION_WINDOW_Y-20));
   calibPoints.push_back(cv::Point2f(20,CALIBRATION_WINDOW_Y-20));
-  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, 20));
-  calibPoints.push_back(cv::Point2f(20, CALIBRATION_WINDOW_Y/2));
-  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y-20));
-  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, CALIBRATION_WINDOW_Y/2));
+  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, 20));
+  //calibPoints.push_back(cv::Point2f(20, CALIBRATION_WINDOW_Y/2));
+  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y-20));
+  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, CALIBRATION_WINDOW_Y/2));
   //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y/2));
   //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/2));
   //calibPoints.push_back(cv::Point2f(3*CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/2));
@@ -243,9 +243,10 @@ int main(int /*argc*/, char ** /*argv*/)
       j++;
     }
     head.getFrame();
-    if(cv::waitKey(40) >= 0) break;
+    //if(cv::waitKey(40) >= 0) break;
     double z = 1;
     cv::Mat head_homography = head.getHomography();
+    //cv::invert(head_homography, head_homography);
     transf_pupil.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
                      head_homography.at<double>(0,1)*pupil.position[0].y + 
                      head_homography.at<double>(0,2)*z;
@@ -265,7 +266,8 @@ int main(int /*argc*/, char ** /*argv*/)
 
   cv::Mat homography;
   //homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
-  homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
+  //homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
+  homography = cv::findHomography(pupilPos, calibPoints,  0);
 
   // Print Matrix
   for(int j = 0; j < 3; j++)
@@ -296,13 +298,12 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat homography2;
 
 
-    //cv::multiply(head_homography, homography, homography);
-    //cv::multiply(homography, head_homography, homography);
+    //cv::invert(head_homography,head_homography);
     cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2, 0);
     //cv::gemm(head_homography, homography, 1, cv::Mat(), 0, homography2, 0);
     //cv::warpPerspective(frame,frame_warped,homography,frame.size());
     //cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y), cv::INTER_CUBIC);
-    cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
+    cv::warpPerspective(frame,frame_warped,homography2,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
     cv::Point2f new_point;
     double z = 1;
 
@@ -356,22 +357,17 @@ int main(int /*argc*/, char ** /*argv*/)
       std::cout << std::endl;
     }
 
-    std::cout << "bla1" << std::endl;
     new_point.x = homography2.at<double>(0,0)*pupil.position[0].x + 
                   homography2.at<double>(0,1)*pupil.position[0].y + 
                   homography2.at<double>(0,2)*z;
-    std::cout << "bla2" << std::endl;
     new_point.y = homography2.at<double>(1,0)*pupil.position[0].x + 
                   homography2.at<double>(1,1)*pupil.position[0].y + 
                   homography2.at<double>(1,2)*z;
-    std::cout << "bla3" << std::endl;
     z = homography2.at<double>(2,0)*pupil.position[0].x + 
         homography2.at<double>(2,1)*pupil.position[0].y + 
         homography2.at<double>(2,2)*z;
-    std::cout << "bla4" << std::endl;
     new_point.x = new_point.x/z;
     new_point.y = new_point.y/z;
-    std::cout << "bla5" << std::endl;
     z = 1;
 
     //std::cout << "x " << new_point.x << " y " << new_point.y << std::endl;

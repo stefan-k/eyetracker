@@ -35,5 +35,7 @@ cv::Mat HeadCapture::getFrame()
   if(m_convert_to_gray)
     cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2GRAY);
 
+  cv::flip(m_frame,m_frame,1);
+
   return m_frame;
 }

@@ -71,6 +71,7 @@ cv::Mat TrackingHead::getFrame()
   }
 
   m_homography = cv::findHomography(m_markers, m_corners, 0);
+  //m_homography = cv::findHomography(m_corners, m_markers, 0);
   // just for testing purposes
   //cv::Mat frame_warped;
   //cv::warpPerspective(m_frame,frame_warped,m_homography,cv::Size(m_frame_width,m_frame_height));
