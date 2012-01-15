@@ -31,14 +31,18 @@ TrackingHead::TrackingHead(const int head_cam, int show_binary)
   m_corners.push_back(cv::Point2f(m_frame_width, 0));
   m_corners.push_back(cv::Point2f(m_frame_width, m_frame_height));
   m_corners.push_back(cv::Point2f(0, m_frame_height));
-  m_markers.push_back(cv::Point2f(0, 0));
-  m_markers.push_back(cv::Point2f(m_frame_width, 0));
-  m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
-  m_markers.push_back(cv::Point2f(0, m_frame_height));
+  //m_markers.push_back(cv::Point2f(0, 0));
+  //m_markers.push_back(cv::Point2f(m_frame_width, 0));
+  //m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
+  //m_markers.push_back(cv::Point2f(0, m_frame_height));
   //m_markers.push_back(cv::Point2f(0, 0));
   //m_markers.push_back(cv::Point2f(1, 0));
   //m_markers.push_back(cv::Point2f(1, 1));
   //m_markers.push_back(cv::Point2f(0, 1));
+  m_markers.push_back(cv::Point2f(0, 0));
+  m_markers.push_back(cv::Point2f(200, 0));
+  m_markers.push_back(cv::Point2f(200, 200));
+  m_markers.push_back(cv::Point2f(0, 200));
 }
 
 cv::Mat TrackingHead::getFrame()
@@ -57,24 +61,31 @@ cv::Mat TrackingHead::getFrame()
 
   for(int i = 0; i < m_corners.size(); i++)
   {
-    //double min = std::numeric_limits<double>::max();
-    double max = 0;
+    double min = std::numeric_limits<double>::max();
+    //double max = 0;
     for(int j = 0; j < m_circles.size(); j++)
     {
       double dist = sqrt(pow(m_corners[i].x - m_circles[j][0],2) + 
                          pow(m_corners[i].y - m_circles[j][1],2));
-      //if(dist < min)
-      if(dist > max)
+      if(dist < min)
+      //if(dist > max)
       {
-        //min = dist;
-        max = dist;
+        min = dist;
+        //max = dist;
         m_markers[i] = cv::Point2f(m_circles[j][0], m_circles[j][1]);
       }
     }
   }
+  //std::cout << "makrers" << std::endl;
+  //for(int i = 0; i < 4; i++)
+  //{
+    //std::cout << "x " << m_markers[i].x << " y " << m_markers[i].y << std::endl;
+  //}
 
   //m_homography = cv::findHomography(m_markers, m_corners, 0);
-  m_homography = cv::getPerspectiveTransform(m_markers, m_corners);
+  //m_homography = cv::findHomography(m_markers, m_corners, CV_RANSAC);
+  //m_homography = cv::getPerspectiveTransform(m_markers, m_corners);
+  m_homography = cv::getPerspectiveTransform(m_corners, m_markers);
   //m_homography = cv::findHomography(m_corners, m_markers, 0);
   // just for testing purposes
   //cv::Mat frame_warped;

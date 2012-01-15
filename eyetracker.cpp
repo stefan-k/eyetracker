@@ -127,7 +127,7 @@ int main(int /*argc*/, char ** /*argv*/)
     // just that it's not getting too big...
     if(tracked_points.size() > 51)
       tracked_points.clear();
-
+    
     // show eye frame
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::createTrackbar(TRACKBAR_BW_THRESHOLD,    EYE_WINDOW_NAME, &bw_thresh, 255, 0, NULL);
@@ -195,6 +195,8 @@ int main(int /*argc*/, char ** /*argv*/)
   // print parameters
   eye.printParams();
 
+  cv::Mat init_head_homography;
+
   // CALIBRATION ROUTINE
   std::vector<cv::Point2f> calibPoints;
   calibPoints.push_back(cv::Point2f(20,20));
@@ -232,17 +234,21 @@ int main(int /*argc*/, char ** /*argv*/)
     for(;;)
     {
       pupil = eye.getPupil();
-
+      //head.getFrame();
+      //cv::Mat head_homography = head.getHomography();
+      //cv::Mat frame_warped;
+      //cv::warpPerspective(frame,frame_warped,head_homography,cv::Size(200,200));
 
       frame = pupil.frame.clone();
       cv::imshow(EYE_WINDOW_NAME, frame);
+      //cv::imshow(EYE_WINDOW_NAME, frame_warped);
       //std::cout << pupil.position[0].x << " " << pupil.position[0].y << std::endl;
       //pointsum += pupil.position[0];
       //frame = pupil.frame.clone();
       if(cv::waitKey(10) >= 0) break;
       j++;
     }
-    head.getFrame();
+    cv::Mat tmp_head = head.getFrame();
     //if(cv::waitKey(40) >= 0) break;
     cv::Mat head_homography = head.getHomography();
     //cv::invert(head_homography, head_homography);
@@ -259,10 +265,32 @@ int main(int /*argc*/, char ** /*argv*/)
     transf_pupil.x = transf_pupil.x/z;
     transf_pupil.y = transf_pupil.y/z;
     z = 1;
+
+    init_head_homography = head_homography.clone();
+
+    //std::cout << "HEAD" << std::endl;
+    //for(int j = 0; j < 3; j++)
+    //{
+      //for(int k = 0; k < 3; k++)
+      //{
+        //std::cout << head_homography.at<float>(j,k) << " ";
+      //}
+      //std::cout << std::endl;
+    //}
+    //cv::Mat frame_warped;
+    //cv::warpPerspective(tmp_head,frame_warped,head_homography,cv::Size(640,480));
+    //transf_pupil.x = pupil.position[0].x;
+    //transf_pupil.y = pupil.position[0].y;
+    //std::cout << " pupil x " << pupil.position[0].x 
+              //<< " trans x " << transf_pupil.x
+              //<< " pupil y " << pupil.position[0].y
+              //<< " trans y " << transf_pupil.y << std::endl;
     //pupilPos.push_back(cv::Point2f(pointsum.x/j, pointsum.y/j));
     //pupilPos.push_back(pupil.position[0]);
     //cv::perspectiveTransform(cv::Point2f(pupil.position[0].x,pupil.position[0].y), transf_pupil, head_homography);
     pupilPos.push_back(transf_pupil);
+    //cv::imshow(HEAD_WINDOW_NAME, frame_warped);
+    if(cv::waitKey(10) >= 0) break;
   }
 
   cv::Mat homography;
@@ -298,10 +326,21 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat head_homography = head.getHomography();
 
     cv::Mat homography2;
+    cv::Mat head_homography_inv;
+    cv::Mat init_head_homography_inv;
+
+    cv::invert(head_homography, head_homography_inv);
+    cv::invert(init_head_homography, init_head_homography_inv);
 
 
     //cv::invert(head_homography,head_homography);
-    cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2, 0);
+    // this works ...
+    cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2);
+    
+    //cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, homography2);
+    //cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, homography2);
+    //cv::gemm(homography, homography2, 1, cv::Mat(), 0, homography2);
+    //cv::gemm(head_homography, homography2, 1, cv::Mat(), 0, homography2);
     //cv::gemm(head_homography, homography, 1, cv::Mat(), 0, homography2, 0);
     //cv::warpPerspective(frame,frame_warped,homography,frame.size());
     //cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y), cv::INTER_CUBIC);
