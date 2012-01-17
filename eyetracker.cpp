@@ -251,7 +251,10 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat tmp_head = head.getFrame();
     //if(cv::waitKey(40) >= 0) break;
     cv::Mat head_homography = head.getHomography();
-    //cv::invert(head_homography, head_homography);
+    //cv::Mat head_homography_inv;
+    //cv::invert(head_homography, head_homography_inv);
+    pupil.position[0].x = 0.90*pupil.position[0].x+100;
+    pupil.position[0].y = 0.70*pupil.position[0].y+200;
     double z = 1;
     transf_pupil.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
                      head_homography.at<double>(0,1)*pupil.position[0].y + 
@@ -326,78 +329,40 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat head_homography = head.getHomography();
 
     cv::Mat homography2;
-    cv::Mat head_homography_inv;
+    cv::Mat head_homography2;
+    //cv::Mat head_homography_inv;
     cv::Mat init_head_homography_inv;
 
-    cv::invert(head_homography, head_homography_inv);
+    //cv::invert(head_homography, head_homography_inv);
     cv::invert(init_head_homography, init_head_homography_inv);
 
 
     //cv::invert(head_homography,head_homography);
     // this works ...
     cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2);
+    cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, head_homography2);
     
-    //cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, homography2);
-    //cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, homography2);
-    //cv::gemm(homography, homography2, 1, cv::Mat(), 0, homography2);
-    //cv::gemm(head_homography, homography2, 1, cv::Mat(), 0, homography2);
-    //cv::gemm(head_homography, homography, 1, cv::Mat(), 0, homography2, 0);
-    //cv::warpPerspective(frame,frame_warped,homography,frame.size());
-    //cv::warpPerspective(frame,frame_warped,homography,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y), cv::INTER_CUBIC);
     cv::warpPerspective(frame,frame_warped,homography2,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
     cv::Point2f new_point;
+    cv::Point2f head_point;
     double z = 1;
 
-    //new_point.x = homography.at<double>(0,0)*pupil.position[0].x + 
-                  //homography.at<double>(0,1)*pupil.position[0].y + 
-                  //homography.at<double>(0,2)*z;
-    //new_point.y = homography.at<double>(1,0)*pupil.position[0].x + 
-                  //homography.at<double>(1,1)*pupil.position[0].y + 
-                  //homography.at<double>(1,2)*z;
-    //z = homography.at<double>(2,0)*pupil.position[0].x + 
-        //homography.at<double>(2,1)*pupil.position[0].y + 
-        //homography.at<double>(2,2)*z;
-    //new_point.x = new_point.x/z;
-    //new_point.y = new_point.y/z;
-    //z = 1;
 
-    //new_point.x = head_homography.at<double>(0,0)*new_point.x + 
-                  //head_homography.at<double>(0,1)*new_point.y + 
-                  //head_homography.at<double>(0,2)*z;
-    //new_point.y = head_homography.at<double>(1,0)*new_point.x + 
-                  //head_homography.at<double>(1,1)*new_point.y + 
-                  //head_homography.at<double>(1,2)*z;
-    //z = head_homography.at<double>(2,0)*new_point.x + 
-               //head_homography.at<double>(2,1)*new_point.y + 
-               //head_homography.at<double>(2,2)*z;
-    //new_point.x = new_point.x/z;
-    //new_point.y = new_point.y/z;
-
-
-    // multiply by frame homography first, then by eyehomography
-    //new_point.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
-                  //head_homography.at<double>(0,1)*pupil.position[0].y + 
-                  //head_homography.at<double>(0,2)*z;
-    //new_point.y = head_homography.at<double>(1,0)*pupil.position[0].x + 
-                  //head_homography.at<double>(1,1)*pupil.position[0].y + 
-                  //head_homography.at<double>(1,2)*z;
-    //z = head_homography.at<double>(2,0)*pupil.position[0].x + 
-        //head_homography.at<double>(2,1)*pupil.position[0].y + 
-        //head_homography.at<double>(2,2)*z;
-    //new_point.x = new_point.x/z;
-    //new_point.y = new_point.y/z;
-
-    //cv::multiply(homography, head_homography, homography);
-    std::cout << "new matrix" << std::endl;
-    for(int j = 0; j < 3; j++)
-    {
-      for(int k = 0; k < 3; k++)
-      {
-        //std::cout << homography2.at<float>(j,k) << " ";
-        std::cout << head_homography.at<float>(j,k) << " ";
-      }
-      std::cout << std::endl;
-    }
+    //std::cout << "new matrix" << std::endl;
+    //for(int j = 0; j < 3; j++)
+    //{
+      //for(int k = 0; k < 3; k++)
+      //{
+        ////std::cout << homography2.at<float>(j,k) << " ";
+        //std::cout << head_homography.at<float>(j,k) << " ";
+      //}
+      //std::cout << std::endl;
+    //}
+    float x_tmp = pupil.position[0].x;
+    float y_tmp = pupil.position[0].y;
+    //pupil.position[0].x = 1.06*pupil.position[0].x+53;
+    pupil.position[0].x = 0.90*pupil.position[0].x+100;
+    pupil.position[0].y = 0.70*pupil.position[0].y+200;
 
     new_point.x = homography2.at<double>(0,0)*pupil.position[0].x + 
                   homography2.at<double>(0,1)*pupil.position[0].y + 
@@ -412,6 +377,19 @@ int main(int /*argc*/, char ** /*argv*/)
     new_point.y = new_point.y/z;
     z = 1;
 
+    head_point.x = head_homography2.at<double>(0,0)*pupil.position[0].x + 
+                   head_homography2.at<double>(0,1)*pupil.position[0].y + 
+                   head_homography2.at<double>(0,2)*z;
+    head_point.y = head_homography2.at<double>(1,0)*pupil.position[0].x + 
+                   head_homography2.at<double>(1,1)*pupil.position[0].y + 
+                   head_homography2.at<double>(1,2)*z;
+    z = head_homography2.at<double>(2,0)*pupil.position[0].x + 
+        head_homography2.at<double>(2,1)*pupil.position[0].y + 
+        head_homography2.at<double>(2,2)*z;
+    head_point.x = head_point.x/z;
+    head_point.y = head_point.y/z;
+    z = 1;
+
     //std::cout << "x " << new_point.x << " y " << new_point.y << std::endl;
 
     //new_point.x = homography.at<double>(0,0)*pupil.position[0].x + homography.at<double>(0,1)*pupil.position[0].y + homography.at<double>(0,2)*1;
@@ -422,7 +400,10 @@ int main(int /*argc*/, char ** /*argv*/)
 
     cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
 
-    cv::circle(frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
+    //cv::circle(frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
+    cv::circle(frame, cv::Point2f(x_tmp, y_tmp), 2, cv::Scalar(255), 2);
+    //cv::circle(head_frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
+    cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
     cv::imshow(HEAD_WINDOW_NAME, head_frame);

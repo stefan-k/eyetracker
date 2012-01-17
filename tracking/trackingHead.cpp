@@ -31,18 +31,18 @@ TrackingHead::TrackingHead(const int head_cam, int show_binary)
   m_corners.push_back(cv::Point2f(m_frame_width, 0));
   m_corners.push_back(cv::Point2f(m_frame_width, m_frame_height));
   m_corners.push_back(cv::Point2f(0, m_frame_height));
-  //m_markers.push_back(cv::Point2f(0, 0));
-  //m_markers.push_back(cv::Point2f(m_frame_width, 0));
-  //m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
-  //m_markers.push_back(cv::Point2f(0, m_frame_height));
+  m_markers.push_back(cv::Point2f(0, 0));
+  m_markers.push_back(cv::Point2f(m_frame_width, 0));
+  m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
+  m_markers.push_back(cv::Point2f(0, m_frame_height));
   //m_markers.push_back(cv::Point2f(0, 0));
   //m_markers.push_back(cv::Point2f(1, 0));
   //m_markers.push_back(cv::Point2f(1, 1));
   //m_markers.push_back(cv::Point2f(0, 1));
-  m_markers.push_back(cv::Point2f(0, 0));
-  m_markers.push_back(cv::Point2f(200, 0));
-  m_markers.push_back(cv::Point2f(200, 200));
-  m_markers.push_back(cv::Point2f(0, 200));
+  //m_markers.push_back(cv::Point2f(0, 0));
+  //m_markers.push_back(cv::Point2f(200, 0));
+  //m_markers.push_back(cv::Point2f(200, 200));
+  //m_markers.push_back(cv::Point2f(0, 200));
 }
 
 cv::Mat TrackingHead::getFrame()
@@ -84,8 +84,8 @@ cv::Mat TrackingHead::getFrame()
 
   //m_homography = cv::findHomography(m_markers, m_corners, 0);
   //m_homography = cv::findHomography(m_markers, m_corners, CV_RANSAC);
-  //m_homography = cv::getPerspectiveTransform(m_markers, m_corners);
-  m_homography = cv::getPerspectiveTransform(m_corners, m_markers);
+  m_homography = cv::getPerspectiveTransform(m_markers, m_corners);
+  //m_homography = cv::getPerspectiveTransform(m_corners, m_markers);
   //m_homography = cv::findHomography(m_corners, m_markers, 0);
   // just for testing purposes
   //cv::Mat frame_warped;
