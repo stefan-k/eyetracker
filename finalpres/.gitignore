@@ -1,0 +1,12 @@
+*.swp
+*.log
+*.aux
+*.pdf
+*.nav
+*.out
+*.toc
+*.snm
+*.vrb
+*.svg
+*.png
+
