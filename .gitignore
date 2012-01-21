@@ -1,4 +1,5 @@
 build/
+buildvid/
 *.swp
 CMakeCache.txt
 et
