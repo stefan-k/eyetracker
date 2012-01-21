@@ -69,6 +69,11 @@ public:
   void printParams();
 
   /**
+   * Return binary frame
+   */
+  cv::Mat getBwFrame();
+
+  /**
    * Set and Get Parameters for BW Thresholding
    */
   void setBwThreshold(double threshold)

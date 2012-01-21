@@ -16,7 +16,7 @@
 #define EYE_CAM 1
 #define HEAD_CAM 0
 //#define CAPTURE_HEAD
-#define VIDEO_OUTPUT 0
+#define VIDEO_OUTPUT 1
 #define CONVERT_TO_GRAY 1
 
 #define SHOW_BINARY 0
@@ -52,13 +52,15 @@ int main(int /*argc*/, char ** /*argv*/)
   cv::Mat head_frame;
 
   cv::VideoWriter writer;
+  cv::VideoWriter writer_bw;
   if(VIDEO_OUTPUT)
   {
     //writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
-    writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
-    if (!writer.isOpened())
+    writer.open("output_eye_init.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
+    writer_bw.open("output_eye_init_bw.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
+    if (!writer.isOpened() || !writer_bw.isOpened())
     {
-      std::cout << "[Error] Cannot encode video with fallback codec!" << std::endl;
+      std::cout << "[Error] Oh noez! Something went wrong!" << std::endl;
       return -1;
     }
   }
@@ -185,12 +187,29 @@ int main(int /*argc*/, char ** /*argv*/)
       cv::Mat color;
       cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);
       writer << color;
+      cv::Mat bw_frame = eye.getBinaryFrame();
+      cv::cvtColor(bw_frame.clone(), color, CV_GRAY2BGR);
+      writer_bw << color;
     }
   }
   // print parameters
   eye.printParams();
 
   cv::Mat init_head_homography;
+
+  cv::VideoWriter calib_writer;
+  cv::VideoWriter calib_writer_eye;
+  if(VIDEO_OUTPUT)
+  {
+    //writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
+    calib_writer.open("output_calib.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y));
+    calib_writer_eye.open("output_eye_calib.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
+    if (!calib_writer.isOpened() || !calib_writer_eye.isOpened())
+    {
+      std::cout << "[Error] Oh noez! Something went wrong!" << std::endl;
+      return -1;
+    }
+  }
 
   // CALIBRATION ROUTINE
   // The more points you choose, the better the homography estimation should get.
@@ -199,11 +218,11 @@ int main(int /*argc*/, char ** /*argv*/)
   calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,20));
   calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,CALIBRATION_WINDOW_Y-20));
   calibPoints.push_back(cv::Point2f(20,CALIBRATION_WINDOW_Y-20));
-  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, 20));
-  //calibPoints.push_back(cv::Point2f(20, CALIBRATION_WINDOW_Y/2));
-  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y-20));
-  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, CALIBRATION_WINDOW_Y/2));
-  //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, 20));
+  calibPoints.push_back(cv::Point2f(20, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y-20));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, CALIBRATION_WINDOW_Y/2));
+  calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/2, CALIBRATION_WINDOW_Y/2));
   //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/2));
   //calibPoints.push_back(cv::Point2f(3*CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/2));
   //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y/4));
@@ -241,6 +260,14 @@ int main(int /*argc*/, char ** /*argv*/)
       cv::imshow(EYE_WINDOW_NAME, frame);
       if(cv::waitKey(10) >= 0) break;
       j++;
+      if(VIDEO_OUTPUT)
+      {
+        cv::Mat color;
+        cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);
+        calib_writer_eye << color;
+        cv::cvtColor(calibWindow.clone(), color, CV_GRAY2BGR);
+        calib_writer << color;
+      }
     }
 
     //cv::Mat tmp_head = head.getFrame();
@@ -296,6 +323,19 @@ int main(int /*argc*/, char ** /*argv*/)
     //}
     //std::cout << std::endl;
   //}
+  cv::VideoWriter mapping_writer;
+  cv::VideoWriter mapping_writer_eye;
+  if(VIDEO_OUTPUT)
+  {
+    //writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
+    mapping_writer.open("output_mapping.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y));
+    mapping_writer_eye.open("output_eye_mapping.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
+    if (!mapping_writer.isOpened() || !mapping_writer_eye.isOpened())
+    {
+      std::cout << "[Error] Oh noez! Something went wrong!" << std::endl;
+      return -1;
+    }
+  }
 
   // MAPPING
   // Warp Eye-Image and map eyemovement onto screen
@@ -388,6 +428,14 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
     //cv::imshow(HEAD_WINDOW_NAME, head_frame);
     if(cv::waitKey(10) >= 0) break;
+    if(VIDEO_OUTPUT)
+    {
+      cv::Mat color;
+      cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);
+      mapping_writer_eye << color;
+      cv::cvtColor(frame_warped.clone(), color, CV_GRAY2BGR);
+      mapping_writer << color;
+    }
   }
 
   return 0;

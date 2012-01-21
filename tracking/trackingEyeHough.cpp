@@ -103,7 +103,7 @@ TrackedPupil TrackingEyeHough::getPupil()
     hull_t.push_back(hull);
     // draw the intermediate steps (contour, hull)
     //cv::drawContours(tmp_pupil.frame, contours, -1, cv::Scalar(255));
-    //cv::drawContours(tmp_pupil.frame, hull_t, -1, cv::Scalar(235));
+    cv::drawContours(tmp_pupil.frame, hull_t, -1, cv::Scalar(235));
     
     // For an ellipse, apparently 5 points are necessary
     if(hull.size() > 5)
@@ -197,6 +197,11 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
     pupil.frame = gray.clone();
 
   m_binary_frame = binary.clone();
+}
+
+cv::Mat TrackingEyeHough::getBwFrame()
+{
+  return m_binary_frame.clone();
 }
 
 //------------------------------------------------------------------------------
