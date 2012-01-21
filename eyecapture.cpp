@@ -32,6 +32,7 @@ EyeCapture::~EyeCapture()
 cv::Mat EyeCapture::getFrame()
 {
   *(m_eye) >> m_frame;
+  // convert it and get the needed channel
   if(m_convert_to_gray)
   {
     // YCrCb
@@ -51,6 +52,8 @@ cv::Mat EyeCapture::getFrame()
     //cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2HSV);
     //int from_to[] = {2, 0};
     //cv::mixChannels(&m_frame, 1, &Y, 1, from_to, 1);
+    
+    // flip the image... this actually isn't necessary, but looks better
     cv::flip(Y, Y, 1);
 
     return Y.clone();
