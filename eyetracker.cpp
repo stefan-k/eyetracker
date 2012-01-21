@@ -247,30 +247,30 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat head_homography = head.getHomography();
 
     // transfer eye frame into head frame... this is just a crude estimation
-    pupil.position[0].x = 0.90*pupil.position[0].x+100;
-    pupil.position[0].y = 0.70*pupil.position[0].y+200;
+    //pupil.position[0].x = 0.90*pupil.position[0].x+100;
+    //pupil.position[0].y = 0.70*pupil.position[0].y+200;
 
     // apply current head homography
-    double z = 1;
-    transf_pupil.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
-                     head_homography.at<double>(0,1)*pupil.position[0].y + 
-                     head_homography.at<double>(0,2)*z;
-    transf_pupil.y = head_homography.at<double>(1,0)*pupil.position[0].x + 
-                     head_homography.at<double>(1,1)*pupil.position[0].y + 
-                     head_homography.at<double>(1,2)*z;
-    z = head_homography.at<double>(2,0)*pupil.position[0].x + 
-        head_homography.at<double>(2,1)*pupil.position[0].y + 
-        head_homography.at<double>(2,2)*z;
-    transf_pupil.x = transf_pupil.x/z;
-    transf_pupil.y = transf_pupil.y/z;
-    z = 1;
+    //double z = 1;
+    //transf_pupil.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
+                     //head_homography.at<double>(0,1)*pupil.position[0].y + 
+                     //head_homography.at<double>(0,2)*z;
+    //transf_pupil.y = head_homography.at<double>(1,0)*pupil.position[0].x + 
+                     //head_homography.at<double>(1,1)*pupil.position[0].y + 
+                     //head_homography.at<double>(1,2)*z;
+    //z = head_homography.at<double>(2,0)*pupil.position[0].x + 
+        //head_homography.at<double>(2,1)*pupil.position[0].y + 
+        //head_homography.at<double>(2,2)*z;
+    //transf_pupil.x = transf_pupil.x/z;
+    //transf_pupil.y = transf_pupil.y/z;
+    //z = 1;
 
     // this isn't really needed, just for testing purposes (transfering
     // the pupil back onto the reference frame of the head frame)
     init_head_homography = head_homography.clone();
 
-    //transf_pupil.x = pupil.position[0].x;
-    //transf_pupil.y = pupil.position[0].y;
+    transf_pupil.x = pupil.position[0].x;
+    transf_pupil.y = pupil.position[0].y;
     //std::cout << " pupil x " << pupil.position[0].x 
               //<< " trans x " << transf_pupil.x
               //<< " pupil y " << pupil.position[0].y
@@ -324,7 +324,8 @@ int main(int /*argc*/, char ** /*argv*/)
 
     // multiply main homography with head homography before applying to 
     // pupil position
-    cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2);
+    //cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2);
+    homography2 = homography;
     // testing! transforms pupil from the marker frame to the head frame
     // this shows how unstable the solution is
     cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, head_homography2);
@@ -363,18 +364,18 @@ int main(int /*argc*/, char ** /*argv*/)
 
     // testing!
     // warp eye position in marker frame back to head frame
-    head_point.x = head_homography2.at<double>(0,0)*pupil.position[0].x + 
-                   head_homography2.at<double>(0,1)*pupil.position[0].y + 
-                   head_homography2.at<double>(0,2)*z;
-    head_point.y = head_homography2.at<double>(1,0)*pupil.position[0].x + 
-                   head_homography2.at<double>(1,1)*pupil.position[0].y + 
-                   head_homography2.at<double>(1,2)*z;
-    z = head_homography2.at<double>(2,0)*pupil.position[0].x + 
-        head_homography2.at<double>(2,1)*pupil.position[0].y + 
-        head_homography2.at<double>(2,2)*z;
-    head_point.x = head_point.x/z;
-    head_point.y = head_point.y/z;
-    z = 1;
+    //head_point.x = head_homography2.at<double>(0,0)*pupil.position[0].x + 
+                   //head_homography2.at<double>(0,1)*pupil.position[0].y + 
+                   //head_homography2.at<double>(0,2)*z;
+    //head_point.y = head_homography2.at<double>(1,0)*pupil.position[0].x + 
+                   //head_homography2.at<double>(1,1)*pupil.position[0].y + 
+                   //head_homography2.at<double>(1,2)*z;
+    //z = head_homography2.at<double>(2,0)*pupil.position[0].x + 
+        //head_homography2.at<double>(2,1)*pupil.position[0].y + 
+        //head_homography2.at<double>(2,2)*z;
+    //head_point.x = head_point.x/z;
+    //head_point.y = head_point.y/z;
+    //z = 1;
 
     // draw tracked point
     cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
@@ -382,7 +383,7 @@ int main(int /*argc*/, char ** /*argv*/)
     // draw pupil position onto eye frame
     cv::circle(frame, cv::Point2f(x_tmp, y_tmp), 2, cv::Scalar(255), 2);
     // draw pupil into head frame
-    cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
+    //cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
     cv::imshow(HEAD_WINDOW_NAME, head_frame);
