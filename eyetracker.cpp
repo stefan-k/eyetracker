@@ -43,6 +43,7 @@
  */
 int main(int /*argc*/, char ** /*argv*/)
 {
+  // Initialize Eye Tracker
   TrackingEyeHough eye(EYE_CAM, SHOW_BINARY);
 
   TrackedPupil pupil;
@@ -84,12 +85,16 @@ int main(int /*argc*/, char ** /*argv*/)
   int h_minRadius = (int)head.getHoughMinRadius();
   int h_maxRadius = (int)head.getHoughMaxRadius();
 
+  // this vector is used to store the last 50 pupil positions to draw the 
+  // connecting lines
   std::vector<cv::Point2f> tracked_points;
 
   for(;;)
   {
+    // get current frame and pupil position of eye camera 
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
+
     if (frame.empty())
     {
       std::cout << "[Warning] EYE: Skipping empty frame." << std::endl;
@@ -97,6 +102,7 @@ int main(int /*argc*/, char ** /*argv*/)
     }
 
 #ifdef CAPTURE_HEAD
+    // get current head frame to display
     head_frame = head.getFrame();
     if (head_frame.empty())
     {
@@ -105,9 +111,10 @@ int main(int /*argc*/, char ** /*argv*/)
     }
 #endif
 
-    //cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
+    // draw point in center of pupil
     cv::circle(frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
 
+    // draw connecting lines of the last 50 pupil positions
     tracked_points.push_back(pupil.position[0]);
     for(int i = (tracked_points.size() > 50) ? tracked_points.size()-50 : 1; i < tracked_points.size(); i++)
     {
@@ -173,7 +180,6 @@ int main(int /*argc*/, char ** /*argv*/)
     head.setHoughMaxRadius(h_maxRadius);
 #endif
 
-
     if(VIDEO_OUTPUT)
     {
       cv::Mat color;
@@ -187,6 +193,7 @@ int main(int /*argc*/, char ** /*argv*/)
   cv::Mat init_head_homography;
 
   // CALIBRATION ROUTINE
+  // The more points you choose, the better the homography estimation should get.
   std::vector<cv::Point2f> calibPoints;
   calibPoints.push_back(cv::Point2f(20,20));
   calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20,20));
@@ -210,16 +217,22 @@ int main(int /*argc*/, char ** /*argv*/)
   //calibPoints.push_back(cv::Point2f(20, 3*CALIBRATION_WINDOW_Y/4));
   //calibPoints.push_back(cv::Point2f(3*CALIBRATION_WINDOW_X/4, CALIBRATION_WINDOW_Y-20));
   //calibPoints.push_back(cv::Point2f(CALIBRATION_WINDOW_X-20, 3*CALIBRATION_WINDOW_Y/4));
+
+  // vector that holds all the pupil positions of the calibration routine
   std::vector<cv::Point2f> pupilPos;
 
+  // loop through all calibration points and show one after the other
   for(int i = 0; i < calibPoints.size(); i++)
   {
     cv::Mat calibWindow(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y, CV_8UC1, cv::Scalar(0));
     cv::circle(calibWindow, calibPoints[i], 4, cv::Scalar(255), 2);
     cv::imshow(CALIBRATION_WINDOW_NAME, calibWindow);
+
     cv::Point2f pointsum(0,0);
     int j = 0;
     cv::Point2f transf_pupil;
+
+    // get all the eye frames until user presses button
     for(;;)
     {
       pupil = eye.getPupil();
@@ -229,11 +242,15 @@ int main(int /*argc*/, char ** /*argv*/)
       if(cv::waitKey(10) >= 0) break;
       j++;
     }
+
     cv::Mat tmp_head = head.getFrame();
     cv::Mat head_homography = head.getHomography();
 
+    // transfer eye frame into head frame... this is just a crude estimation
     pupil.position[0].x = 0.90*pupil.position[0].x+100;
     pupil.position[0].y = 0.70*pupil.position[0].y+200;
+
+    // apply current head homography
     double z = 1;
     transf_pupil.x = head_homography.at<double>(0,0)*pupil.position[0].x + 
                      head_homography.at<double>(0,1)*pupil.position[0].y + 
@@ -248,6 +265,8 @@ int main(int /*argc*/, char ** /*argv*/)
     transf_pupil.y = transf_pupil.y/z;
     z = 1;
 
+    // this isn't really needed, just for testing purposes (transfering
+    // the pupil back onto the reference frame of the head frame)
     init_head_homography = head_homography.clone();
 
     //transf_pupil.x = pupil.position[0].x;
@@ -256,10 +275,12 @@ int main(int /*argc*/, char ** /*argv*/)
               //<< " trans x " << transf_pupil.x
               //<< " pupil y " << pupil.position[0].y
               //<< " trans y " << transf_pupil.y << std::endl;
+
     pupilPos.push_back(transf_pupil);
     if(cv::waitKey(10) >= 0) break;
   }
 
+  // estimate homography from the pupil positions and the points on the screen
   cv::Mat homography;
   //homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
   homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
@@ -281,6 +302,7 @@ int main(int /*argc*/, char ** /*argv*/)
   cv::Mat frame_warped;
   for(;;)
   {
+    // get current pupil and frame
     pupil = eye.getPupil();
     frame = pupil.frame.clone();
     if (frame.empty())
@@ -289,6 +311,7 @@ int main(int /*argc*/, char ** /*argv*/)
       continue;
     }
 
+    // get current head frame and head homography
     cv::Mat head_frame = head.getFrame();
     cv::Mat head_homography = head.getHomography();
 
@@ -296,11 +319,20 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Mat head_homography2;
     cv::Mat init_head_homography_inv;
 
+    // testing!
     cv::invert(init_head_homography, init_head_homography_inv);
 
+    // multiply main homography with head homography before applying to 
+    // pupil position
     cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2);
+    // testing! transforms pupil from the marker frame to the head frame
+    // this shows how unstable the solution is
     cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, head_homography2);
     
+    // warp eye frame onto calibration window -> this is nice because it shows
+    // that the mapping is extremely sensitive (pupil is huge, which means that 
+    // very limited movement has to be tracked) and in case the homography sucks
+    // it is easy to see because the warped image is totally distorted
     cv::warpPerspective(frame,frame_warped,homography2,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
     cv::Point2f new_point;
     cv::Point2f head_point;
@@ -308,9 +340,14 @@ int main(int /*argc*/, char ** /*argv*/)
 
     float x_tmp = pupil.position[0].x;
     float y_tmp = pupil.position[0].y;
+
+    // again transform pupil position onto reference head frame
+    // this is because one has to know where in the marker frame
+    // the eye is...
     pupil.position[0].x = 0.90*pupil.position[0].x+100;
     pupil.position[0].y = 0.70*pupil.position[0].y+200;
 
+    // apply homography
     new_point.x = homography2.at<double>(0,0)*pupil.position[0].x + 
                   homography2.at<double>(0,1)*pupil.position[0].y + 
                   homography2.at<double>(0,2)*z;
@@ -324,6 +361,8 @@ int main(int /*argc*/, char ** /*argv*/)
     new_point.y = new_point.y/z;
     z = 1;
 
+    // testing!
+    // warp eye position in marker frame back to head frame
     head_point.x = head_homography2.at<double>(0,0)*pupil.position[0].x + 
                    head_homography2.at<double>(0,1)*pupil.position[0].y + 
                    head_homography2.at<double>(0,2)*z;
@@ -337,9 +376,12 @@ int main(int /*argc*/, char ** /*argv*/)
     head_point.y = head_point.y/z;
     z = 1;
 
+    // draw tracked point
     cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
 
+    // i forgot what this does
     cv::circle(frame, cv::Point2f(x_tmp, y_tmp), 2, cv::Scalar(255), 2);
+    // draw pupil into head frame
     cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
