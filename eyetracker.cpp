@@ -65,7 +65,6 @@ int main(int /*argc*/, char ** /*argv*/)
 
 #ifdef CAPTURE_HEAD
   TrackingHead head(HEAD_CAM, 0);
-#endif
 
   // define all trackbar values (EYE CAM)
   int bw_thresh = eye.getBwThreshold();
@@ -84,6 +83,7 @@ int main(int /*argc*/, char ** /*argv*/)
   int h_param2 = (int)head.getHoughParam2();
   int h_minRadius = (int)head.getHoughMinRadius();
   int h_maxRadius = (int)head.getHoughMaxRadius();
+#endif
 
   // this vector is used to store the last 50 pupil positions to draw the 
   // connecting lines
@@ -243,8 +243,8 @@ int main(int /*argc*/, char ** /*argv*/)
       j++;
     }
 
-    cv::Mat tmp_head = head.getFrame();
-    cv::Mat head_homography = head.getHomography();
+    //cv::Mat tmp_head = head.getFrame();
+    //cv::Mat head_homography = head.getHomography();
 
     // transfer eye frame into head frame... this is just a crude estimation
     //pupil.position[0].x = 0.90*pupil.position[0].x+100;
@@ -267,7 +267,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
     // this isn't really needed, just for testing purposes (transfering
     // the pupil back onto the reference frame of the head frame)
-    init_head_homography = head_homography.clone();
+    //init_head_homography = head_homography.clone();
 
     transf_pupil.x = pupil.position[0].x;
     transf_pupil.y = pupil.position[0].y;
@@ -312,15 +312,15 @@ int main(int /*argc*/, char ** /*argv*/)
     }
 
     // get current head frame and head homography
-    cv::Mat head_frame = head.getFrame();
-    cv::Mat head_homography = head.getHomography();
+    //cv::Mat head_frame = head.getFrame();
+    //cv::Mat head_homography = head.getHomography();
 
     cv::Mat homography2;
     cv::Mat head_homography2;
     cv::Mat init_head_homography_inv;
 
     // testing!
-    cv::invert(init_head_homography, init_head_homography_inv);
+    //cv::invert(init_head_homography, init_head_homography_inv);
 
     // multiply main homography with head homography before applying to 
     // pupil position
@@ -328,7 +328,7 @@ int main(int /*argc*/, char ** /*argv*/)
     homography2 = homography;
     // testing! transforms pupil from the marker frame to the head frame
     // this shows how unstable the solution is
-    cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, head_homography2);
+    //cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, head_homography2);
     
     // warp eye frame onto calibration window -> this is nice because it shows
     // that the mapping is extremely sensitive (pupil is huge, which means that 
@@ -345,8 +345,8 @@ int main(int /*argc*/, char ** /*argv*/)
     // again transform pupil position onto reference head frame
     // this is because one has to know where in the marker frame
     // the eye is...
-    pupil.position[0].x = 0.90*pupil.position[0].x+100;
-    pupil.position[0].y = 0.70*pupil.position[0].y+200;
+    //pupil.position[0].x = 0.90*pupil.position[0].x+100;
+    //pupil.position[0].y = 0.70*pupil.position[0].y+200;
 
     // apply homography
     new_point.x = homography2.at<double>(0,0)*pupil.position[0].x + 
