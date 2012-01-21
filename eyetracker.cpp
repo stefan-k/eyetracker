@@ -15,7 +15,7 @@
 
 #define EYE_CAM 1
 #define HEAD_CAM 0
-#define CAPTURE_HEAD
+//#define CAPTURE_HEAD
 #define VIDEO_OUTPUT 0
 #define CONVERT_TO_GRAY 1
 
@@ -63,9 +63,6 @@ int main(int /*argc*/, char ** /*argv*/)
     }
   }
 
-#ifdef CAPTURE_HEAD
-  TrackingHead head(HEAD_CAM, 0);
-
   // define all trackbar values (EYE CAM)
   int bw_thresh = eye.getBwThreshold();
   int minDist = (int)eye.getHoughMinDist();
@@ -74,6 +71,9 @@ int main(int /*argc*/, char ** /*argv*/)
   int param2 = (int)eye.getHoughParam2();
   int minRadius = (int)eye.getHoughMinRadius();
   int maxRadius = (int)eye.getHoughMaxRadius();
+
+#ifdef CAPTURE_HEAD
+  TrackingHead head(HEAD_CAM, 0);
 
   // define all trackbar values (HEAD CAM)
   int h_bw_thresh = head.getBwThreshold();
@@ -316,8 +316,8 @@ int main(int /*argc*/, char ** /*argv*/)
     //cv::Mat head_homography = head.getHomography();
 
     cv::Mat homography2;
-    cv::Mat head_homography2;
-    cv::Mat init_head_homography_inv;
+    //cv::Mat head_homography2;
+    //cv::Mat init_head_homography_inv;
 
     // testing!
     //cv::invert(init_head_homography, init_head_homography_inv);
@@ -386,7 +386,7 @@ int main(int /*argc*/, char ** /*argv*/)
     //cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
-    cv::imshow(HEAD_WINDOW_NAME, head_frame);
+    //cv::imshow(HEAD_WINDOW_NAME, head_frame);
     if(cv::waitKey(10) >= 0) break;
   }
 
