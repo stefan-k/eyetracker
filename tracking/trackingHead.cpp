@@ -35,20 +35,11 @@ TrackingHead::TrackingHead(const int head_cam, int show_binary)
   m_markers.push_back(cv::Point2f(m_frame_width, 0));
   m_markers.push_back(cv::Point2f(m_frame_width, m_frame_height));
   m_markers.push_back(cv::Point2f(0, m_frame_height));
-  //m_markers.push_back(cv::Point2f(0, 0));
-  //m_markers.push_back(cv::Point2f(1, 0));
-  //m_markers.push_back(cv::Point2f(1, 1));
-  //m_markers.push_back(cv::Point2f(0, 1));
-  //m_markers.push_back(cv::Point2f(0, 0));
-  //m_markers.push_back(cv::Point2f(200, 0));
-  //m_markers.push_back(cv::Point2f(200, 200));
-  //m_markers.push_back(cv::Point2f(0, 200));
 }
 
 cv::Mat TrackingHead::getFrame()
 {
   m_frame = m_head->getFrame().clone();
-  //equalizeHist(m_frame, m_frame);
   cv::threshold(m_frame.clone(), m_binary_frame, m_bw_threshold, 255, cv::THRESH_BINARY);
 
   for(int i = 0; i < 8; i++)
@@ -59,35 +50,30 @@ cv::Mat TrackingHead::getFrame()
   for(int i = 0; i < m_circles.size(); i++)
     cv::circle(m_frame, cv::Point2f(m_circles[i][0], m_circles[i][1]), m_circles[0][2], cv::Scalar(255), 2);
 
+  // get upper right corner marker, upper left corner marker and so on...
   for(int i = 0; i < m_corners.size(); i++)
   {
     double min = std::numeric_limits<double>::max();
-    //double max = 0;
     for(int j = 0; j < m_circles.size(); j++)
     {
       double dist = sqrt(pow(m_corners[i].x - m_circles[j][0],2) + 
                          pow(m_corners[i].y - m_circles[j][1],2));
       if(dist < min)
-      //if(dist > max)
       {
         min = dist;
-        //max = dist;
         m_markers[i] = cv::Point2f(m_circles[j][0], m_circles[j][1]);
       }
     }
   }
-  //std::cout << "makrers" << std::endl;
-  //for(int i = 0; i < 4; i++)
-  //{
-    //std::cout << "x " << m_markers[i].x << " y " << m_markers[i].y << std::endl;
-  //}
 
   //m_homography = cv::findHomography(m_markers, m_corners, 0);
   //m_homography = cv::findHomography(m_markers, m_corners, CV_RANSAC);
   m_homography = cv::getPerspectiveTransform(m_markers, m_corners);
   //m_homography = cv::getPerspectiveTransform(m_corners, m_markers);
   //m_homography = cv::findHomography(m_corners, m_markers, 0);
+
   // just for testing purposes
+  // this warps the head frame onto the head cam dims
   //cv::Mat frame_warped;
   //cv::warpPerspective(m_frame,frame_warped,m_homography,cv::Size(m_frame_width,m_frame_height));
   //m_frame = frame_warped.clone();
@@ -119,7 +105,6 @@ void TrackingHead::EllipseMarkers()
     {
       cv::RotatedRect rect_n = cv::fitEllipse(contours[i]);
       cv::ellipse(m_frame, rect_n, cv::Scalar(200));
-      //circles.push_back(cv::Vec3f(rect_n[0], rect_n[1], 0);
       circles.push_back(cv::Vec3f(rect_n.center.x, rect_n.center.y, 0));
     }
     m_circles = circles;
@@ -134,6 +119,7 @@ void TrackingHead::EllipseMarkers()
   }
 }
 
+// DEPRECATED!!!
 void TrackingHead::HoughCirclesMarkers()
 {
   cv::Mat gray, binary;

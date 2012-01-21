@@ -103,17 +103,6 @@ int main(int /*argc*/, char ** /*argv*/)
       std::cout << "[Warning] HEAD: Skipping empty frame." << std::endl;
       continue;
     }
-    //for testing purposes
-    //cv::Mat head_homography = head.getHomography();
-    //// Print Matrix
-    //for(int j = 0; j < 3; j++)
-    //{
-      //for(int k = 0; k < 3; k++)
-      //{
-        //std::cout << head_homography.at<float>(j,k) << " ";
-      //}
-      //std::cout << std::endl;
-    //}
 #endif
 
     //cv::circle(frame, cv::Point(pupil.position[i].x, pupil.position[i].y), pupil.radius[i], cv::Scalar(255), 2);
@@ -234,25 +223,15 @@ int main(int /*argc*/, char ** /*argv*/)
     for(;;)
     {
       pupil = eye.getPupil();
-      //head.getFrame();
-      //cv::Mat head_homography = head.getHomography();
-      //cv::Mat frame_warped;
-      //cv::warpPerspective(frame,frame_warped,head_homography,cv::Size(200,200));
 
       frame = pupil.frame.clone();
       cv::imshow(EYE_WINDOW_NAME, frame);
-      //cv::imshow(EYE_WINDOW_NAME, frame_warped);
-      //std::cout << pupil.position[0].x << " " << pupil.position[0].y << std::endl;
-      //pointsum += pupil.position[0];
-      //frame = pupil.frame.clone();
       if(cv::waitKey(10) >= 0) break;
       j++;
     }
     cv::Mat tmp_head = head.getFrame();
-    //if(cv::waitKey(40) >= 0) break;
     cv::Mat head_homography = head.getHomography();
-    //cv::Mat head_homography_inv;
-    //cv::invert(head_homography, head_homography_inv);
+
     pupil.position[0].x = 0.90*pupil.position[0].x+100;
     pupil.position[0].y = 0.70*pupil.position[0].y+200;
     double z = 1;
@@ -271,46 +250,31 @@ int main(int /*argc*/, char ** /*argv*/)
 
     init_head_homography = head_homography.clone();
 
-    //std::cout << "HEAD" << std::endl;
-    //for(int j = 0; j < 3; j++)
-    //{
-      //for(int k = 0; k < 3; k++)
-      //{
-        //std::cout << head_homography.at<float>(j,k) << " ";
-      //}
-      //std::cout << std::endl;
-    //}
-    //cv::Mat frame_warped;
-    //cv::warpPerspective(tmp_head,frame_warped,head_homography,cv::Size(640,480));
     //transf_pupil.x = pupil.position[0].x;
     //transf_pupil.y = pupil.position[0].y;
     //std::cout << " pupil x " << pupil.position[0].x 
               //<< " trans x " << transf_pupil.x
               //<< " pupil y " << pupil.position[0].y
               //<< " trans y " << transf_pupil.y << std::endl;
-    //pupilPos.push_back(cv::Point2f(pointsum.x/j, pointsum.y/j));
-    //pupilPos.push_back(pupil.position[0]);
-    //cv::perspectiveTransform(cv::Point2f(pupil.position[0].x,pupil.position[0].y), transf_pupil, head_homography);
     pupilPos.push_back(transf_pupil);
-    //cv::imshow(HEAD_WINDOW_NAME, frame_warped);
     if(cv::waitKey(10) >= 0) break;
   }
 
   cv::Mat homography;
   //homography = cv::findHomography(pupilPos, calibPoints,  CV_RANSAC);
-  //homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
+  homography = cv::findHomography(pupilPos, calibPoints,  CV_LMEDS);
   //homography = cv::findHomography(pupilPos, calibPoints,  0);
-  homography = cv::getPerspectiveTransform(pupilPos, calibPoints);
+  //homography = cv::getPerspectiveTransform(pupilPos, calibPoints);
 
   // Print Matrix
-  for(int j = 0; j < 3; j++)
-  {
-    for(int k = 0; k < 3; k++)
-    {
-      std::cout << homography.at<float>(j,k) << " ";
-    }
-    std::cout << std::endl;
-  }
+  //for(int j = 0; j < 3; j++)
+  //{
+    //for(int k = 0; k < 3; k++)
+    //{
+      //std::cout << homography.at<float>(j,k) << " ";
+    //}
+    //std::cout << std::endl;
+  //}
 
   // MAPPING
   // Warp Eye-Image and map eyemovement onto screen
@@ -330,15 +294,10 @@ int main(int /*argc*/, char ** /*argv*/)
 
     cv::Mat homography2;
     cv::Mat head_homography2;
-    //cv::Mat head_homography_inv;
     cv::Mat init_head_homography_inv;
 
-    //cv::invert(head_homography, head_homography_inv);
     cv::invert(init_head_homography, init_head_homography_inv);
 
-
-    //cv::invert(head_homography,head_homography);
-    // this works ...
     cv::gemm(homography, head_homography, 1, cv::Mat(), 0, homography2);
     cv::gemm(init_head_homography_inv, head_homography, 1, cv::Mat(), 0, head_homography2);
     
@@ -347,20 +306,8 @@ int main(int /*argc*/, char ** /*argv*/)
     cv::Point2f head_point;
     double z = 1;
 
-
-    //std::cout << "new matrix" << std::endl;
-    //for(int j = 0; j < 3; j++)
-    //{
-      //for(int k = 0; k < 3; k++)
-      //{
-        ////std::cout << homography2.at<float>(j,k) << " ";
-        //std::cout << head_homography.at<float>(j,k) << " ";
-      //}
-      //std::cout << std::endl;
-    //}
     float x_tmp = pupil.position[0].x;
     float y_tmp = pupil.position[0].y;
-    //pupil.position[0].x = 1.06*pupil.position[0].x+53;
     pupil.position[0].x = 0.90*pupil.position[0].x+100;
     pupil.position[0].y = 0.70*pupil.position[0].y+200;
 
@@ -390,28 +337,15 @@ int main(int /*argc*/, char ** /*argv*/)
     head_point.y = head_point.y/z;
     z = 1;
 
-    //std::cout << "x " << new_point.x << " y " << new_point.y << std::endl;
-
-    //new_point.x = homography.at<double>(0,0)*pupil.position[0].x + homography.at<double>(0,1)*pupil.position[0].y + homography.at<double>(0,2)*1;
-    //new_point.y = homography.at<double>(1,0)*pupil.position[0].x + homography.at<double>(1,1)*pupil.position[0].y + homography.at<double>(1,2)*1;
-    //z = homography.at<double>(2,0)*pupil.position[0].x + homography.at<double>(2,1)*pupil.position[0].y + homography.at<double>(2,2)*1;
-    //new_point.x = new_point.x/z;
-    //new_point.y = new_point.y/z;
-
     cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
 
-    //cv::circle(frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
     cv::circle(frame, cv::Point2f(x_tmp, y_tmp), 2, cv::Scalar(255), 2);
-    //cv::circle(head_frame, cv::Point2f(pupil.position[0].x, pupil.position[0].y), 2, cv::Scalar(255), 2);
     cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
     cv::imshow(EYE_WINDOW_NAME, frame);
     cv::imshow(CALIBRATION_WINDOW_NAME, frame_warped);
     cv::imshow(HEAD_WINDOW_NAME, head_frame);
     if(cv::waitKey(10) >= 0) break;
   }
-
-
-
 
   return 0;
 }

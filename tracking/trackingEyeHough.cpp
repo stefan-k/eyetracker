@@ -14,25 +14,6 @@ TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
 {
   m_eye = new EyeCapture(m_eye_cam, 1);
 
-  // this is necessary to give the camera some time to adjust to the current
-  // illumination of the scene
-  //for(int i = 0; i < 10; i++)
-  //{
-    //m_eye->getFrame();
-    //sleep(1); 
-  //}
-
-  //TrackedPupil pupils;
-  //HoughCirclesPupil(pupils);
-
-  //CallbackData callback_data;
-  //callback_data.detected_positions = &pupils;
-  //callback_data.pupil_to_track = &m_curr_pupil;
-
-  //cv::imshow(INPUT_WINDOW_NAME, pupils.frame);
-  //cv::setMouseCallback(INPUT_WINDOW_NAME, mouse_callback, &callback_data);
-  //PAUSE;
-  //
   TrackedPupil tmp;
   tmp.position.push_back(cv::Point2f(0,0));
   tmp.radius.push_back(0);
@@ -40,7 +21,6 @@ TrackingEyeHough::TrackingEyeHough(const int eye_cam, int show_binary)
 
   m_curr_pupil = tmp;
   m_prev_pupil = tmp;
-  
 
 }
 
@@ -62,7 +42,6 @@ TrackedPupil TrackingEyeHough::getPupil()
 
   // find closest circle
   double min = std::numeric_limits<double>::max();
-  //std::cout << "found " << pupil.position.size() << " pupils" << std::endl;
   for(int i = 0; i < pupil.position.size(); i++)
   {
     double dist = distance(m_curr_pupil.position[0], pupil.position[i]);
@@ -103,7 +82,7 @@ TrackedPupil TrackingEyeHough::getPupil()
     hull_t.push_back(hull);
     //cv::drawContours(tmp_pupil.frame, contours, -1, cv::Scalar(255));
     //cv::drawContours(tmp_pupil.frame, hull_t, -1, cv::Scalar(235));
-    //
+    
     // For an ellipse, apparently 5 points are necessary
     if(hull.size() > 5)
     {
@@ -118,6 +97,7 @@ TrackedPupil TrackingEyeHough::getPupil()
   //if(min < 0)
   if(distance(m_curr_pupil.position[0], tmp_pupil.position[0]) < 0)
   {
+    // this never happens. this is ugly
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
   else
@@ -126,21 +106,10 @@ TrackedPupil TrackingEyeHough::getPupil()
     //m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y + tmp_prev_pupil.position[0].y)/3;
     m_curr_pupil.position[0].x = (m_curr_pupil.position[0].x + tmp_pupil.position[0].x)/2;
     m_curr_pupil.position[0].y = (m_curr_pupil.position[0].y + tmp_pupil.position[0].y)/2;
-    // With the ellipse, building the mean isn't necessary
-    //m_curr_pupil.position[0].x = tmp_pupil.position[0].x;
-    //m_curr_pupil.position[0].y = tmp_pupil.position[0].y;
     m_curr_pupil.frame = tmp_pupil.frame.clone();
   }
 
-  //if(min < 800)
-    //// pupil caught, update 
-    //m_curr_pupil = tmp_pupil;
-  //else
-    //// pupil not caught, but still update frame
-    //m_curr_pupil.frame = tmp_pupil.frame;
-
   return m_curr_pupil;
-  
 }
 
 //------------------------------------------------------------------------------
@@ -152,27 +121,14 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
   gray = m_eye->getFrame();
   gray = gray(roi).clone();
   equalizeHist(gray, gray);
-  //cv::morphologyEx(gray, gray, cv::MORPH_OPEN, cv::Mat());
-  //cv::morphologyEx(gray, gray, cv::MORPH_OPEN, cv::Mat());
   cv::erode(gray, gray, cv::Mat());
-
 
   cv::GaussianBlur(gray, gray_blur, cv::Size(9,9), 5, 5);
   //gray_blur = gray.clone();
   cv::threshold(gray_blur, binary, m_bw_threshold, 255, cv::THRESH_BINARY_INV);
 
-  //for(int i = 0; i < 40; i++)
-  //{
-    //cv::morphologyEx(binary, binary, cv::MORPH_OPEN, cv::Mat());
-    ////cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
-  //}
-
-  //for(int i = 0; i < 1; i++)
-    //cv::erode(binary, binary, cv::Mat());
-
   for(int i = 0; i < 2; i++)
     cv::dilate(binary, binary, cv::Mat());
-    //cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, cv::Mat());
 
   std::vector<cv::Vec3f> circles;
 
@@ -202,6 +158,8 @@ void TrackingEyeHough::HoughCirclesPupil(TrackedPupil &pupil)
 }
 
 //------------------------------------------------------------------------------
+// THIS ONE IS NOT NEEDED ANYMORE BECAUSE WE DONT NEED INITIALIZATION BY THE 
+// USER!
 void mouse_callback(int event, int x, int y, int flags, void* user_data)
 {
   switch(event)
@@ -254,6 +212,7 @@ double TrackingEyeHough::distance(const cv::Point2f pupil_to_track,
               pow(pupil_to_track.y - found_pupil.y, 2));
 }
 
+// Print Parameters for tracking
 void TrackingEyeHough::printParams()
 {
   std::cout << "TrackingEyeHough Parameters" << std::endl;

@@ -54,7 +54,6 @@ cv::Mat EyeCapture::getFrame()
     cv::flip(Y, Y, 1);
 
     return Y.clone();
-    //cv::cvtColor(m_frame.clone(), m_frame, CV_BGR2GRAY);
   }
   cv::flip(m_frame, m_frame, 1);
 
