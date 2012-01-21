@@ -379,7 +379,7 @@ int main(int /*argc*/, char ** /*argv*/)
     // draw tracked point
     cv::circle(frame_warped, new_point, 4, cv::Scalar(255), 2);
 
-    // i forgot what this does
+    // draw pupil position onto eye frame
     cv::circle(frame, cv::Point2f(x_tmp, y_tmp), 2, cv::Scalar(255), 2);
     // draw pupil into head frame
     cv::circle(head_frame, cv::Point2f(head_point.x, head_point.y), 2, cv::Scalar(255), 2);
