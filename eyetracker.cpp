@@ -59,7 +59,7 @@ int main(int /*argc*/, char ** /*argv*/)
     //writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
     writer.open("output_eye_init.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
     writer_bw.open("output_eye_init_bw.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
-    writer_full.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y));
+    writer_full.open("output.avi", CV_FOURCC('X','V','I','D'), 20, cv::Size(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y));
     if (!writer.isOpened() || !writer_bw.isOpened() || !writer_full.isOpened())
     {
       std::cout << "[Error] Oh noez! Something went wrong!" << std::endl;
