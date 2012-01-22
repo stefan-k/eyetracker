@@ -97,7 +97,7 @@
 %\institute[TU Graz]{Institute of Medical Engineering, TU Graz }
 \title{EyeTracking with two cameras}
 \subtitle{Image Processing and Pattern Recognition Project}
-\author{Stefan Kroboth, Christoph Aigner}
+\author{Christoph Aigner, Stefan Kroboth}
 \date{January 23, 2012}		% wenn ein anderes als das heutige Datum eingesetzt werden soll
 
 % Subject und Keywords für PDF-Datei
@@ -231,6 +231,17 @@
   \end{block}
 \end{frame}
 
+\begin{frame}
+	\frametitle{Basic idea}
+  \framesubtitle{The problems with the head tracking}
+  \begin{itemize}
+    \item problem is ill-conditioned
+    \item small uncertainties have a big effect on the mapping
+    \item one has to know the position of the eye frame within the frame spanned by the markers
+    \item therefore all the geometries have to be known exactly
+  \end{itemize}
+\end{frame}
+
 \section{Results}
 \subsection{Video}
 \begin{frame}
@@ -265,9 +276,17 @@
     \item works in principle
     \item perfect eye tracking is crutial
     \item knowledge of the geometries is crutial as well
+    \item once the geometries are known, one could imlement another calibration routine to find the relationship of the eye frame to the frame spanned by the markers
   \end{itemize}
 \end{frame}
 
+
+\subsection*{Thank You}
+\begin{frame}
+  \begin{center}
+    \huge{Thank You!}
+  \end{center}
+\end{frame}
 
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
