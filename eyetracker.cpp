@@ -53,12 +53,14 @@ int main(int /*argc*/, char ** /*argv*/)
 
   cv::VideoWriter writer;
   cv::VideoWriter writer_bw;
+  cv::VideoWriter writer_full;
   if(VIDEO_OUTPUT)
   {
     //writer.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(640, 480));
     writer.open("output_eye_init.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
     writer_bw.open("output_eye_init_bw.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(200, 120));
-    if (!writer.isOpened() || !writer_bw.isOpened())
+    writer_full.open("output.avi", CV_FOURCC('X','V','I','D'), 10, cv::Size(CALIBRATION_WINDOW_X, CALIBRATION_WINDOW_Y));
+    if (!writer.isOpened() || !writer_bw.isOpened() || !writer_full.isOpened())
     {
       std::cout << "[Error] Oh noez! Something went wrong!" << std::endl;
       return -1;
@@ -184,12 +186,22 @@ int main(int /*argc*/, char ** /*argv*/)
 
     if(VIDEO_OUTPUT)
     {
+      cv::Mat vid_out(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y, CV_8UC3, cv::Scalar(255, 255,255));
+      cv::Rect eye_roi(28,196,200,120);
+      cv::Rect bw_roi(284,196,200,120);
+      cv::Mat vid_out_eye;
+      cv::Mat vid_out_bw;
+      vid_out_eye = vid_out(eye_roi);
+      vid_out_bw = vid_out(bw_roi);
       cv::Mat color;
       cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);
+      color.copyTo(vid_out_eye);
       writer << color;
       cv::Mat bw_frame = eye.getBinaryFrame();
       cv::cvtColor(bw_frame.clone(), color, CV_GRAY2BGR);
+      color.copyTo(vid_out_bw);
       writer_bw << color;
+      writer_full << vid_out;
     }
   }
   // print parameters
@@ -262,11 +274,17 @@ int main(int /*argc*/, char ** /*argv*/)
       j++;
       if(VIDEO_OUTPUT)
       {
+        cv::Mat color_calib;
         cv::Mat color;
+        cv::Mat color_calib_roi;
+        cv::cvtColor(calibWindow.clone(), color_calib, CV_GRAY2BGR);
+        calib_writer << color_calib;
         cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);
         calib_writer_eye << color;
-        cv::cvtColor(calibWindow.clone(), color, CV_GRAY2BGR);
-        calib_writer << color;
+        cv::Rect calib_roi(284,284,200,120);
+        color_calib_roi = color_calib(calib_roi);
+        color.copyTo(color_calib_roi);
+        writer_full << color_calib;
       }
     }
 
@@ -375,6 +393,7 @@ int main(int /*argc*/, char ** /*argv*/)
     // very limited movement has to be tracked) and in case the homography sucks
     // it is easy to see because the warped image is totally distorted
     cv::warpPerspective(frame,frame_warped,homography2,cv::Size(CALIBRATION_WINDOW_X,CALIBRATION_WINDOW_Y));
+    frame_warped = cv::Scalar(0);
     cv::Point2f new_point;
     cv::Point2f head_point;
     double z = 1;
@@ -431,10 +450,16 @@ int main(int /*argc*/, char ** /*argv*/)
     if(VIDEO_OUTPUT)
     {
       cv::Mat color;
+      cv::Mat color_fr;
+      cv::Rect eye_roi(284,284,200,120);
+      cv::Mat color_fr_roi;
       cv::cvtColor(frame.clone(), color, CV_GRAY2BGR);
       mapping_writer_eye << color;
-      cv::cvtColor(frame_warped.clone(), color, CV_GRAY2BGR);
-      mapping_writer << color;
+      cv::cvtColor(frame_warped.clone(), color_fr, CV_GRAY2BGR);
+      mapping_writer << color_fr;
+      color_fr_roi = color_fr(eye_roi);
+      color.copyTo(color_fr_roi);
+      writer_full << color_fr;
     }
   }
 
