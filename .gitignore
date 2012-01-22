@@ -3,3 +3,5 @@ buildvid/
 *.swp
 CMakeCache.txt
 et
+*_ca*
+*.zip

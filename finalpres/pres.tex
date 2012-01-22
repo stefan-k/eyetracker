@@ -134,11 +134,13 @@
 	\frametitle{Introduction}
   \begin{itemize}
     \item Goal: Map eye movement onto screen independent of head position
-    \item two cameras
+    \item two cameras capture two frames
       \begin{itemize}
         \item eye camera $\rightarrow$ track eye movement
         \item head camera $\rightarrow$ track head movement
       \end{itemize}
+    \item software computes two homographies and combines them
+    \item the pupil position is mapped to the screen
   \end{itemize}
 \end{frame}
 
@@ -163,7 +165,7 @@
   \framesubtitle{Idea}
   \vspace*{-0.5cm}
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{01.png}
+    \includegraphics[width=0.8\textwidth]{01.pdf}
   \end{center}
 
 \end{frame}
@@ -171,9 +173,9 @@
 \begin{frame}
 	\frametitle{Software}
   \framesubtitle{Head Tracking}
-  \vspace*{-0.5cm}
+  \vspace*{-2.5cm}
   \begin{center}
-    \includegraphics[width=0.9\textwidth]{03.png}
+    \includegraphics[width=1.5\textwidth]{03.pdf}
   \end{center}
 \end{frame}
 \subsubsection{Eye Tracking}
@@ -182,7 +184,7 @@
   \framesubtitle{Eye Tracking}
   \vspace*{-0.5cm}
   \begin{center}
-    \includegraphics[width=1.05\textwidth]{02.png}
+    \includegraphics[width=1.05\textwidth]{02.pdf}
   \end{center}
 \end{frame}
 
@@ -222,8 +224,9 @@
     \end{equation*}
   \end{block}\pause
   \begin{block}{Mapping with head movement}
+    \vspace*{-0.5cm}
     \begin{equation*}
-      x_\mathrm{screen} = H_\mathrm{eye} H_\mathrm{calib-head} ^{-1} H_\mathrm{head} x_\mathrm{eye}
+      x_\mathrm{screen} = H_\mathrm{calib}H_\mathrm{head}x_\mathrm{eye} = H_\mathrm{eye} H_\mathrm{calib-head} ^{-1} H_\mathrm{head} x_\mathrm{eye}
     \end{equation*}
     \begin{equation*}
       H_\mathrm{rel-head} = H_\mathrm{calib-head}^{-1} H_\mathrm{head}
