@@ -1,6 +1,7 @@
 \section{Methods}\label{methods}
 
 \subsection{Hardware}
+<<<<<<< HEAD
 Our Hardware consists out of five major parts that are needed to :
 -the glasses
 The glasses are made out of transparent plastic and have no glasses (?) because their only aim is to 'carry' and stabilize the fixed webcam and the four IR-Markers.
@@ -18,10 +19,25 @@ The IR-Markers consist basically of IR-LEDs (wavelength?, other parameters?) tha
 (-> vl. Mindestanforderungen, bessere Beschreibung?)
 
 (--> Bildchen?)
+=======
+\begin{figure}[H]
+  \centering
+  \subfigure[IR light source]{\includegraphics[width=0.4\textwidth]{../finalpres/SDC11117.JPG}}
+  \subfigure[Glasses: Front view]{\includegraphics[width=0.4\textwidth]{../finalpres/SDC11119.JPG}}
+  \subfigure[Glasses: View from above]{\includegraphics[width=0.4\textwidth]{../finalpres/SDC11121.JPG}}
+  \subfigure[Glasses: Another view! Yey!]{\includegraphics[width=0.4\textwidth]{../finalpres/SDC11122.JPG}}
+  \caption{Hardware setup}\label{fig:hardware}
+\end{figure}
+>>>>>>> bc058c70b7ddbfc8ba70c687a9c68c02da618867
 
 \subsection{Software}
 
 \subsubsection{Basic Principle}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{../finalpres/01c.pdf}
+  \caption{Basic principle of the mapping process}\label{fig:basic}
+\end{figure}
 The primary part necessary for proper mapping is the estimation of the homography. 
 This is achieved with a calibration routine. The user has to look at certain defined points on the screen. 
 At every point the position of the pupil is determined. 
@@ -30,6 +46,11 @@ This information is then used to compute the homography from the pupil position 
 TODO: Head Tracking, Images, Graphics
 
 \subsubsection{Tracking of the pupil}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{../finalpres/02c.pdf}
+  \caption{Pupil tracking}\label{fig:pupil}
+\end{figure}
 The first step is to perform several image preprocessing steps on the image aquired by the eye camera. First, the image is converted into the YCrCb color space.
 For all the following steps only the Y-Channel is used, as this channel holds the most important information of the captured frame.
 On this channel histogram equalization is performed to increase the contrast. 
@@ -52,6 +73,11 @@ To further smooth the tracking, temporal filtering by computing the mean of the 
 Although this slows down the tracking a bit, it is still fast enough for normal use.
 
 \subsubsection{Tracking of the head}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{../finalpres/03c.pdf}
+  \caption{Head tracking}\label{fig:head}
+\end{figure}
 
 %\begin{Verbatim}[numbers=left,fontsize=\small]
   %CODE

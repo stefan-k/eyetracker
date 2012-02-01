@@ -14,5 +14,3 @@ $ make
 
 Run executable:
 $ ./eyetracker
-
-something changed!
