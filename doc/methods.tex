@@ -1,25 +1,26 @@
 \section{Methods}\label{methods}
 
 \subsection{Hardware}
-<<<<<<< HEAD
-Our Hardware consists out of five major parts that are needed to :
--the glasses
-The glasses are made out of transparent plastic and have no glasses (?) because their only aim is to 'carry' and stabilize the fixed webcam and the four IR-Markers.
+<<<<<<< HEAD ??
 
--the illumination
+Our Hardware consists out of five major parts that are needed to compute the pupil position:
+
+\begin{itemize}
+  \item the glasses\\
+  The glasses are made out of transparent plastic and have no glasses (?) because their only aim is to 'carry' and stabilize the fixed webcam and the four IR-Markers.
+
+  \item the illumination\\
 Our illumination source is a IR-Lamp that consists out of 15 IR-LEDs (wvelength? other parameters?). To light up the whole head we placed the lamp approximately 30cm in front of the person.
 
--the IR-Markers
+  \item the IR-Markers\\
 The IR-Markers consist basically of IR-LEDs (wavelength?, other parameters?) that are powered (over a serial resistor) parallel by a 9V-battery. Each LED is placed in front of ~30cm cables that allows a universal placement. 
 
--the eye-webcam 
+  \item the eye-webcam\\ 
 (->Parameter, vl. beschreibe kurz wie der IR-Filter entfernt wurde)
 
--the notebook with a built-in-webcam 
+  \item the notebook with a built-in-webcam\\
 (-> vl. Mindestanforderungen, bessere Beschreibung?)
 
-(--> Bildchen?)
-=======
 \begin{figure}[H]
   \centering
   \subfigure[IR light source]{\includegraphics[width=0.4\textwidth]{../finalpres/SDC11117.JPG}}
@@ -28,7 +29,6 @@ The IR-Markers consist basically of IR-LEDs (wavelength?, other parameters?) tha
   \subfigure[Glasses: Another view! Yey!]{\includegraphics[width=0.4\textwidth]{../finalpres/SDC11122.JPG}}
   \caption{Hardware setup}\label{fig:hardware}
 \end{figure}
->>>>>>> bc058c70b7ddbfc8ba70c687a9c68c02da618867
 
 \subsection{Software}
 
@@ -38,12 +38,13 @@ The IR-Markers consist basically of IR-LEDs (wavelength?, other parameters?) tha
   \includegraphics[width=0.9\textwidth]{../finalpres/01c.pdf}
   \caption{Basic principle of the mapping process}\label{fig:basic}
 \end{figure}
-The primary part necessary for proper mapping is the estimation of the homography. 
+The primary part necessary for proper mapping is the estimation of the homography that consists basically out of two different homographies. The first one is based on the head-image, while the second one is calculated out of the detailed pupil-image. 
+The idea of using two homographies on a different scale is to remove the mapping-error, which would occour by moving or rotating the whole head. Therefor we need to compute the head-homography and use that information to have a stable reference frame for the mapping of the pupil. 
 This is achieved with a calibration routine. The user has to look at certain defined points on the screen. 
 At every point the position of the pupil is determined. 
 This information is then used to compute the homography from the pupil position to the screen using the RANSAC algorithm implemented in OpenCV. 
 
-TODO: Head Tracking, Images, Graphics
+TODO: Head Tracking (done), Images, Graphics
 
 \subsubsection{Tracking of the pupil}
 \begin{figure}[H]
@@ -79,6 +80,17 @@ Although this slows down the tracking a bit, it is still fast enough for normal 
   \caption{Head tracking}\label{fig:head}
 \end{figure}
 
+The tracking of the head is based on a filtered image (IR-bandpassfilter) that is captured by a built-in-webcam. The use of this filter - in combination with the already built-in IR-filter - leads to an suppressed infrared image of the upper part of the body. 
+In other words: in this image only the four IR-LEDs (bright dots) can be seen and are used to calculate the homography. 
+To be able to do that we perform several steps to prepare the image for the tracking and make the results as stable as possible.
+
+To suppress side effect and noise the image is thresholded and the pixel information gets transformed into grayscale values. 
+After that we dilate the image to increase the area of the small IR-dots (originally they have the size of a few pixels). 
+These increased radial areas are tranformed by the function \texttt{findcontours()} and marked by \texttt{fitEllipse()} with the shape of Ellipses. 
+That allows us to define the center of the fitted Ellipses as the original IR-marker position. 
+The big advantage of that concept is a much more stabile detection than a more direct way would give.
+Based on those centers the head-homography is computed and the image inside is warped to the screen.
+ 
 %\begin{Verbatim}[numbers=left,fontsize=\small]
   %CODE
 %\end{Verbatim}
