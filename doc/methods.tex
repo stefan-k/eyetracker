@@ -116,8 +116,8 @@ We see that this takes care of the new head position. Therefore, we are able inc
   \includegraphics[width=0.9\textwidth]{../finalpres/02c.pdf}
   \caption{Pupil tracking}\label{fig:pupil}
 \end{figure}
-The first step is to perform several image preprocessing steps on the image aquired by the eye camera. First, the image is converted into the YCrCb color space.
-For all the following steps only the Y-Channel is used, as this channel holds the most important information of the captured frame.
+The first step is to perform several image preprocessing steps on the image aquired by the eye camera. First, the image is converted into the YCrCb color space. The frame is also cropped to a size of 120$\times$100 pixels in order to get rid of unwanted objects like the glasses.
+For all the following steps only the Y-Channel is used, as this channel holds the most important information of the captured frame. 
 On this channel histogram equalization is performed to increase the contrast. 
 Eroding the luminance image removes small reflections of the infrared LEDs on the pupil. 
 A Gaussian blurring filter takes care of noise in the current frame. 
