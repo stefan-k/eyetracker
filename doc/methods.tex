@@ -144,16 +144,18 @@ Although this slows down the tracking a bit, it is still fast enough for normal 
   \caption{Head tracking}\label{fig:head}
 \end{figure}
 
-The tracking of the head is based on a filtered image (IR-bandpassfilter) that is captured by a built-in-webcam. The use of this filter - in combination with the already built-in IR-filter - leads to an suppressed infrared image of the upper part of the body. 
+The tracking of the head is based on a filtered image (IR bandpass filter) that is captured by a built-inwebcam. The use of this filter -- in combination with the already built-in IR-filter -- leads to an suppressed infrared image of the head.
 In other words: in this image only the four IR-LEDs (bright dots) can be seen and are used to calculate the homography. 
 To be able to do that we perform several steps to prepare the image for the tracking and make the results as stable as possible.
 
-To suppress side effect and noise the image is thresholded and the pixel information gets transformed into grayscale values. 
-After that we dilate the image to increase the area of the small IR-dots (originally they have the size of a few pixels). 
-These increased radial areas are tranformed by the function \texttt{findcontours()} and marked by \texttt{fitEllipse()} with the shape of Ellipses. 
-That allows us to define the center of the fitted Ellipses as the original IR-marker position. 
-The big advantage of that concept is a much more stabile detection than a more direct way would give.
-Based on those centers the head-homography is computed and the image inside is warped to the screen.
+To suppress side effects and noise the image is transfored to a grayscale image and thresholded. 
+After that we dilate the image to increase the area of the small IR-dots. Originally the captured dots have the size of a few pixels, therefore, in order to increase the stability of the following steps, the size of the dots has to be increased. 
+The shape of these dots is not optimal for the function \texttt{HoughCircles()} that was used in tracking the pupil, therefore another approach is used. 
+
+Since the nature of the problem assures that the frame after these preprocessing steps shows just the markers, it is possible to compute the contours around the points using \texttt{findContours()}, without having to deal with any clutter. 
+In case four separate contours are found (which is necessary in order to compute a homography), we can fit an ellipse around these points using \texttt{fitEllipse()}. Again, similar to the pupil tracking, the centers of the ellipses represent the centers of the points.
+
+This information is sufficient to compute the head homography
  
 %\begin{Verbatim}[numbers=left,fontsize=\small]
   %CODE
