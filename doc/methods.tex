@@ -42,13 +42,73 @@ The IR-Markers consist basically of IR-LEDs (type: HP HDSL-4230, wavelength = 87
   \includegraphics[width=0.9\textwidth]{../finalpres/01c.pdf}
   \caption{Basic principle of the mapping process}\label{fig:basic}
 \end{figure}
-The primary part necessary for proper mapping is the estimation of the homography that consists basically out of two different homographies. The first one is based on the head-image, while the second one is calculated out of the detailed pupil-image. 
-The idea of using two homographies on a different scale is to remove the mapping-error, which would occour by moving or rotating the whole head. Therefor we need to compute the head-homography and use that information to have a stable reference frame for the mapping of the pupil. 
-This is achieved with a calibration routine. The user has to look at certain defined points on the screen. 
-At every point the position of the pupil is determined. 
-This information is then used to compute the homography from the pupil position to the screen using the RANSAC algorithm implemented in OpenCV. 
+The primary part necessary for proper mapping is the estimation of the homography that consists basically of two different homographies. 
+The first one is based on the image captured by the head camera which shows the four markers, while the second one is estimated using the frame showing the pupil.
 
-TODO: Head Tracking (done), Images, Graphics
+The idea of using two homographies is to compensate for the error occuring due to head movement.
+
+Computing the head homography gives us an idea of the position of the head relative to the position of the head at calibration time. 
+
+%We need to compute the head homography and use that information to have a stable reference frame for the mapping of the pupil. 
+
+%This is achieved with a calibration routine. 
+%The user has to look at certain defined points on the screen. 
+%At every point the position of the pupil is determined. 
+%This information is then used to compute the homography from the pupil position to the screen using the RANSAC algorithm implemented in OpenCV. 
+
+\subsubsection{The math}
+
+The basic idea is to find a mapping $H$ that transforms the pupil position onto the screen, independent of the head position.
+
+\begin{equation}
+  x_\mathrm{screen} = H x_\mathrm{eye}
+  \label{eq:basic}
+\end{equation}
+
+In the calibration procedure, the relationship between the pupil position and the position at the screen is estimated. Therefore the user has to look at several points on the screen. For each point, the pupil position is recorded and a homography is estimated from this information.
+
+To include the relative head position in the calibration process, the position of the pupil $x_\mathrm{eye}$ is first mapped into a new reference frame based on the current position of the head which is given by the head's homography $H_\mathrm{calib-head}$:
+
+\begin{equation}
+  x_\mathrm{screen} = H_\mathrm{calib} (H_\mathrm{calib-head} x_\mathrm{eye})
+\end{equation}
+
+Now, $H_\mathrm{calib}$ represents the mapping of the pupil position in the new reference frame given by the head position, to the screen. One can think of $H_\mathrm{calib}$ as being composed of $H_\mathrm{eye}$ and the inverse of $H_\mathrm{calib-head}$:
+
+\begin{equation}
+  H_\mathrm{calib} = H_\mathrm{eye} H_\mathrm{calib-head} ^{-1}
+\end{equation}
+
+where $H_\mathrm{eye}$ represents the direct homography from the pupil position to the screen without considering the head position, provided the head position didn't change.
+
+So, in case of no head movement, the mapping equation degenerates to:
+% vielleicht ein besseres wort als degenerate finden
+
+\begin{equation}
+  x_\mathrm{screen} = H_\mathrm{eye} H_\mathrm{calib-head} ^{-1} H_\mathrm{calib-head} x_\mathrm{eye}
+\end{equation}
+
+\begin{equation}
+  x_\mathrm{screen} = H_\mathrm{eye}  x_\mathrm{eye}
+\end{equation}
+
+In case the head moved since the calibration routine, the eye position is first mapped to the new reference frame based on the current head homography. Then, the estimated homography $H_\mathrm{calib}$ is applied.
+
+\begin{equation}
+  x_\mathrm{screen} = H_\mathrm{calib}H_\mathrm{head}x_\mathrm{eye} 
+\end{equation}
+
+Filling in the decomposed calibration homography leads to:
+
+\begin{equation}
+  x_\mathrm{screen} = H_\mathrm{calib}H_\mathrm{head}x_\mathrm{eye} = H_\mathrm{eye} H_\mathrm{calib-head} ^{-1} H_\mathrm{head} x_\mathrm{eye}
+\end{equation}
+
+We see that this takes care of the new head position. Therefore, we are able incorporate the position of the head relative to the position the head had at calibration time by implicitly calculating the relative head homography $H_\mathrm{rel-head}$.
+
+\begin{equation}
+  H_\mathrm{rel-head} = H_\mathrm{calib-head}^{-1} H_\mathrm{head}
+\end{equation}
 
 \subsubsection{Tracking of the pupil}
 \begin{figure}[H]
