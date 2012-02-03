@@ -1,25 +1,29 @@
 \section{Methods}\label{methods}
 
 \subsection{Hardware}
-<<<<<<< HEAD <?? keine Ahnung>
 
 Our Hardware consists out of five major parts that are necessary to be able to compute the pupil position:
 
 \begin{itemize}
-  \item the glasses\\
-  The spectacle frame is made out of transparent plastic and has no lenses to prevent optical refraction. The only aim of the glasses is to 'carry' and stabilize the fixed webcam and the four IR-Markers.
+  \item \textit{Glasses:} 
+  The spectacle frame is made out of transparent plastic and has no lenses to prevent reflection. 
+  The high-end masterpiece of engineering based on copper wire, that keeps all the parts in position, even makes MacGyver jealous.
+  The only aim of the glasses is to 'carry' and stabilize the fixed webcam and the four IR-Markers. Figures~\ref{fig:hardware}(b) to (d) show the glasses.
 
-  \item the illumination\\
-Our illumination source is a IR-Lamp that consists out of 15 IR-LEDs (type: BL0106-15-28, wavelength: 940 nm). To light up the whole head we placed the lamp approximately 0,5 m in front of the person.
+\item \textit{Illumination:}
+  Our illumination source is a IR-Lamp that consists out of 15 IR-LEDs (type: BL0106-15-28, wavelength: 940 nm). To light up the whole head we placed the lamp approximately 0,5 m in front of the person. The light source is shown in Fig.~\ref{fig:hardware}(a).
 
-  \item the IR-Markers\\
+  \item \textit{IR-Markers:} 
 The IR-Markers consist basically of IR-LEDs (type: HP HDSL-4230, wavelength = 875 nm) that are powered parallel over a serial resistor (R=82 Ohm) by a 9V-battery. Each LED is placed in front of a 30cm cable that allows a universal placement. 
 
-  \item the eye-webcam\\ 
-(->Parameter, vl. beschreibe kurz wie der IR-Filter entfernt wurde)
+  \item \textit{Eye-webcam:} Due to the need to capture infrared light, the IR cutoff filter of the camera was removed. In order to filter out wavelengths in the rage of visible light, a IR filter taken from a TV remote is mounted in front of the lens.
 
-  \item the notebook with a built-in-webcam\\
-(-> vl. Mindestanforderungen, bessere Beschreibung?)
+  \item \textit{Notebook with a built-in webcam:} Although removing the IR cutoff filter of the built-in camera would be advantageous, this was not performed in order to not destroy the webcam of the laptop. 
+    Fortunately, the IR cut-off filter is bad enough to allow enough IR light to pass to the sensor. 
+    Again, to not capture visible light, a IR filter is placed in front of the lense. In this case a piece of floppy disc was used.
+
+
+\end{itemize}
 
 \begin{figure}[H]
   \centering

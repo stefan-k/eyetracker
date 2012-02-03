@@ -6,11 +6,11 @@ To be able to calculate, record and print the pupil position we designed and bui
 The five major parts are the glasses, the illumination, the IR-Markers, the eye-webcam and a notebook with a built-in webcam.
 
 The camera tracking the eye movement is mounted on a spectacle frame facing one eye, therefore being unaffected by movements of the head. 
-To make the image segmentation of the pupil more easy - decrease distracting shining effect of the eye's vitreous body - we use an infrared LED-lamp as an illumination source. In order for this to work properly, the infrared cut-off filter of the eye camera has been removed to be able to capture also the infrared wavelengths. This usage improves the results of our tracking algorithm significantly.
+To make the image segmentation of the pupil more easy - decrease distracting shining effect of the eye's vitreous body - we use an infrared LED-lamp as an illumination source. In order for this to work properly, the infrared cut-off filter of the eye camera has been removed to be able to also capture the infrared wavelengths. This improves the results of our tracking algorithm significantly.
 
 Movement of the head changes the mapping of the eye movement to the screen. Therefore the head position has to be estimated as well.
 With this additional information it is possible to compute the mapping independent of the head position. 
-For this task four markers - in our setup infrared LEDs - are mounted in form of a rectangle onto the spectacle frame. The built-in webcam of a our notebook takes an image and the software segments this LEDs and computes a relative homography. A IR filter (a piece of a floppy disc) in front of the laptop webcam assures that only the IR light is captured. 
+For this task four markers - in our setup infrared LEDs - are mounted in form of a rectangle onto the spectacle frame. The built-in webcam of a notebook takes an image and the software segments this LEDs and computes a relative homography. A IR filter (a piece of a floppy disc) in front of the laptop webcam assures that only the IR light is captured and distracting light with wavelengths in the visible spectrum are filtered out.
 
 The software is implemented using the open source computer vision library OpenCV. The methods that can be used for this tasks are limited, since real-time is an essential property for this project.
 
