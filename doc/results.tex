@@ -33,26 +33,28 @@ The temporal filtering becomes apparent when the eye movement is very fast. This
 \end{figure}
 
 In the calibration routine as shown in Fig.~\ref{fig:calibration} the homography is estimated.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.5\textwidth]{fin_calibration.png}
-  \caption{Calibration sequence.}\label{fig:calibration}
-\end{figure}
-
 After the homography is estimated, the mapping can be performed as illustrated in Fig~\ref{fig:mapping}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.5\textwidth]{fin_mapping.png}
-  \caption{The mapping maps the eye position onto the screen.}\label{fig:mapping}
+  %\includegraphics[width=0.5\textwidth]{fin_calibration.png}
+  \subfigure[Calibration sequence.]{\includegraphics[width=0.45\textwidth]{fin_calibration.png}\label{fig:calibration}}
+  \subfigure[Mapping the eye position onto the screen.]{\includegraphics[width=0.45\textwidth]{fin_mapping.png}\label{fig:mapping}}
+  \caption{Calibration and Mapping.}\label{fig:calibrationandmapping}
 \end{figure}
+
+
+%\begin{figure}[h]
+  %\centering
+  %\includegraphics[width=0.5\textwidth]{fin_mapping.png}
+  %\caption{The mapping maps the eye position onto the screen.}\label{fig:mapping}
+%\end{figure}
 
 Figure~\ref{fig:headmarkers} shows the tracking of the four markers mounted on the spectacle frame.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{fin_head.png}
+  \includegraphics[width=0.5\textwidth]{fin_head.png}
   \caption{Tracking of the four markers.}\label{fig:headmarkers}
 \end{figure}
 
