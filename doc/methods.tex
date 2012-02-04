@@ -2,7 +2,7 @@
 
 \subsection{Hardware}
 
-Our Hardware consists out of five major parts that are necessary to be able to compute the pupil position:
+Our Hardware (Fig.~\ref{fig:hardware}) consists out of five major parts that are necessary to be able to compute the pupil position:
 
 \begin{itemize}
   \item \textit{Glasses:} 
@@ -42,7 +42,7 @@ The IR-Markers consist basically of IR-LEDs (type: HP HDSL-4230, wavelength = 87
   \includegraphics[width=0.9\textwidth]{../finalpres/01c.pdf}
   \caption{Basic principle of the mapping process}\label{fig:basic}
 \end{figure}
-The primary part necessary for proper mapping is the estimation of the homography that consists basically of two different homographies. 
+The primary part necessary for proper mapping is the estimation of the homography that consists basically of two different homographies as illustrated in Fig.~\ref{fig:basic}. 
 The first one is based on the image captured by the head camera which shows the four markers, while the second one is estimated using the frame showing the pupil.
 
 The idea of using two homographies is to compensate for the error occuring due to head movement.
@@ -116,7 +116,7 @@ We see that this takes care of the new head position. Therefore, we are able inc
   \includegraphics[width=0.9\textwidth]{../finalpres/02c.pdf}
   \caption{Pupil tracking}\label{fig:pupil}
 \end{figure}
-The first step is to perform several image preprocessing steps on the image aquired by the eye camera. First, the image is converted into the YCrCb color space. The frame is also cropped to a size of 120$\times$100 pixels in order to get rid of unwanted objects like the glasses.
+As shown in Fig.~\ref{fig:pupil} the first step is to perform several image preprocessing steps on the image aquired by the eye camera. First, the image is converted into the YCrCb color space. The frame is also cropped to a size of 120$\times$100 pixels in order to get rid of unwanted objects like the glasses.
 For all the following steps only the Y-Channel is used, as this channel holds the most important information of the captured frame. 
 On this channel histogram equalization is performed to increase the contrast. 
 Eroding the luminance image removes small reflections of the infrared LEDs on the pupil. 
@@ -144,7 +144,7 @@ Although this slows down the tracking a bit, it is still fast enough for normal 
   \caption{Head tracking}\label{fig:head}
 \end{figure}
 
-The tracking of the head is based on a filtered image (IR bandpass filter) that is captured by a built-inwebcam. The use of this filter -- in combination with the already built-in IR-filter -- leads to an suppressed infrared image of the head.
+The tracking of the head (Fig.~\ref{fig:head}) is based on a filtered image (IR bandpass filter) that is captured by a built-inwebcam. The use of this filter -- in combination with the already built-in IR-filter -- leads to an suppressed infrared image of the head.
 In other words: in this image only the four IR-LEDs (bright dots) can be seen and are used to calculate the homography. 
 To be able to do that we perform several steps to prepare the image for the tracking and make the results as stable as possible.
 
