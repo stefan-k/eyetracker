@@ -1,27 +1,27 @@
 \section{Discussion}\label{discussion}
 
-As shown in the video, the tracking works quite well in case the head isn't moved. 
-Without head tracking, even small movements of the head have a big impact on the mapping onto the screen. 
-Therefore, our intention was to incorporate the head position into the mapping as well.
-We were not able to get the head tracking to work as expected for several reasons. The most challenging one is the fact that this problem is severely ill-posed. This means that even the smallest deviations lead to big effects on the mapping. The slightest change in the geometry of our hardware setup has an effect that cannot be compensated.
+As shown in the video, the tracking works quite well in case the head isn't moved too much. 
+Without a head tracking, even small movements of the head have a big impact on the mapping which could lead to non-satisfying results.
+Therefore, our intention was to incorporate the head position into the mapping as well, but we were not able to get the head tracking to work as expected for several reasons. 
+The most challenging one is the fact that this problem is severely ill-posed. This means that even the smallest deviations lead to big effects on the mapping. The slightest change in the geometry of our hardware setup has an effect that cannot be compensated.
 
 More specifically, the main problem is that one needs to know the exact relationship between the frame of the eye camera and the rectangle spanned by the markers. 
 This turns out to be rather hard to estimate, because there is no straight-forward way to estimate the field of view (FOV) of this camera. 
 Further, the camera isn't mounted straight in front of the eye, which means that in general, there is also a perspective transform involved in relation to the frame spanned by the head markers. 
 Also, due to the rather dilletantish hardware setup, these geometries keep changing over time. 
-For instance, small rotations of the camera, that don't have a big impact on the mapping itself, have a big influence when head tracking is involved. 
+For instance, small rotations of the camera, that don't have a big impact on the mapping itself, have a big influence when head tracking is involved.
 A similar effect occurs when the markers move. 
 
 The reason why this relationship between the eye frame FOV and the markers needs to be known exactly is that otherwise the head homography cannot be applied to the pupil position. Without this knowledge, the transformed pupil position will always be wrong. Trying to estimate these relationships by hand did improve the mapping, but the ill-posedness still didn't allow proper mapping. 
 
 This problem can be solved by a more robust hardware setup where all geometries are exactly known. 
 Once the hardware setup is known exactly, there may be a way to automatically estimate the FOV of the eye camera using an additional calibration routine. 
-But thinking about the details of this calibration routine doesn't make sense until these conditions are met.
+But thinking about the details of this calibration routine doesn't make sense until these conditions are met and the hardware fulfils them.
 
 One of the lesser issues we encountered is the shakyness of the mapping. 
-Of course, this isn't an easy problem as well, since very small eye movements are mapped to in comparison large screen. 
-Even small inaccuracies get amplified noticably. 
-But compared to the issues we were trying to deal with in case of the head tracking, this one can be improved relatively easy by using a better camera for capturing the eye. 
+Of course, this isn't an easy problem as well, since very small eye movements are mapped to a - in comparison - large screen. 
+Even small inaccuracies get amplified noticably and will be noticed as a shaky artifact.
+But compared to the issues we were trying to deal with the head tracking, this one can be improved relatively easy by using a better camera for capturing the eye. 
 A higher resolution would lead to a much better estimate of the pupil position. 
 Also, removing the IR cutoff filter of the camera led to a flickering stream which didn't improve the tracking either. 
 Although rather unimportant, further improvement could be achieved by mounting the IR LEDs directly around the eye camera. This would lead to a better illumination of the eye than the IR light source could achieve. 
