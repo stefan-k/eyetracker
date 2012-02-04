@@ -1,6 +1,6 @@
 \section{Results}\label{results}
 
-The tracking of the pupil works pretty well, as even in darker areas the pupil isn't lost. This can be seen in Fig.~\ref{fig:pupil1}.
+The tracking of the pupil works pretty well, as even in darker areas the pupil isn't lost. This can be seen in Fig.~\ref{fig:pupil1}, where the fitted ellipse is shown as well as the computed center of the pupil. The right side of the Figure shows the thresholded image.
 
 \begin{figure}[h]
   \centering
@@ -24,7 +24,7 @@ When the pupil isn't visible at all, the tracking looks for the darkest circle-l
   \caption{The tracking is also lost when the eye is closed.}\label{fig:pupilclosed}
 \end{figure}
 
-The temporal filtering becomes apparent when the eye movement is very fast. This leads to a tracking, that lacks behing the actual pupil position (Fig.~\ref{fig:pupiltemporal}). This makes the tracking smoother but also a bit slower.
+The temporal filtering becomes apparent when the eye movement is very fast. This leads to a tracking, that lags behing the actual pupil position (Fig.~\ref{fig:pupiltemporal}). This makes the tracking smoother but also a bit slower.
 
 \begin{figure}[h]
   \centering
@@ -33,7 +33,7 @@ The temporal filtering becomes apparent when the eye movement is very fast. This
 \end{figure}
 
 In the calibration routine as shown in Fig.~\ref{fig:calibration} the homography is estimated.
-After the homography is estimated, the mapping can be performed as illustrated in Fig~\ref{fig:mapping}.
+After this step, the mapping can be performed as illustrated in Fig~\ref{fig:mapping}.
 
 \begin{figure}[h]
   \centering
